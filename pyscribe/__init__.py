@@ -1,0 +1,5 @@
+__title__ = 'pyscribe'
+__version__ = '0.0.1'
+__author__ = 'Alexander Wang'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2014 Alexander Wang'
