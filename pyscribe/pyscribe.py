@@ -70,19 +70,16 @@ class Scriber(object):
         function = [api_call for api_call in self.api_calls if api_call in line]
         assert len(function) == 1 # For now just one function call per line
         if function[0] == "scribe":
-            variable_id = self.get_variable_id(line, program_ast)
-            #obj_type = self.get_type(line, program_ast)
-            #obj_value = self.get_value(line, program_ast)
-            desugared_line += (variable_id + " is the ' + type(" + variable_id + ") + ' ' + str(" + variable_id + ")")
-            #print variable_id
+            desugared_line += self.scribe(line, program_ast)
         output =  "print('" + desugared_line + ")\n"
         return output
 
         #print("x is the " + type(x) + " " + x)
 
 
-    def scribe(self, obj):
-        pass
+    def scribe(self, line, program_ast):
+        variable_id = self.get_variable_id(line, program_ast)
+        return variable_id + " is the ' + type(" + variable_id + ") + ' ' + str(" + variable_id + ")"
 
 def main():
     scribe = Scriber()
