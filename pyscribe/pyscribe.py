@@ -6,8 +6,7 @@ import inspect
 class Scriber(object):
     def __init__(self):
         self.show_line_num = True
-        self.api_calls = [function for function, _ in inspect.getmembers(self, predicate=inspect.ismethod)][1:] # don't want '__init__'
-        self.api_calls.append("Scriber")
+        self.api_calls = ['p']
 
     def gen_line_mapping(self, program_file):
         line_mapping = {}
@@ -39,6 +38,7 @@ class Scriber(object):
         f = open(program_file, 'r')
         ast_output = ast.parse(f.read())
         f.close()
+        #print ast.dump(ast_output)
         return ast_output
 
     def gen_desugared(self, line_mapping, program_file, program_ast):
@@ -63,23 +63,28 @@ class Scriber(object):
                 return node.value.args[0].id
 
     def desugar_line(self, line, line_num, program_ast):
+        indentation = get_indentation(line)
+        line = line[len(indentation):]
         if self.show_line_num:
             desugared_line = "From line " + str(line_num) + ": "
         else:
             desugared_line = ""
         function = [api_call for api_call in self.api_calls if api_call in line]
         assert len(function) == 1 # For now just one function call per line
-        if function[0] == "scribe":
+        if function[0] == "p":
             desugared_line += self.scribe(line, program_ast)
         output =  "print('" + desugared_line + ")\n"
+
+        if len(indentation) > 0:
+            output = indentation + output
         return output
-
-        #print("x is the " + type(x) + " " + x)
-
 
     def scribe(self, line, program_ast):
         variable_id = self.get_variable_id(line, program_ast)
         return variable_id + " is the ' + type(" + variable_id + ") + ' ' + str(" + variable_id + ")"
+
+def get_indentation(line):
+    return line[:len(line)-len(line.strip())]
 
 def main():
     scribe = Scriber()
