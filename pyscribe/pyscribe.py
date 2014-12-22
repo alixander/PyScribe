@@ -8,8 +8,6 @@ class Scriber(object):
         self.show_line_num = True
         self.api_calls = [function for function, _ in inspect.getmembers(self, predicate=inspect.ismethod)][1:] # don't want '__init__'
         self.api_calls.append("Scriber")
-        self.clean_copy_file = ""
-        self.AST = ""
 
     def gen_line_mapping(self, program_file):
         line_mapping = {}
@@ -75,7 +73,7 @@ class Scriber(object):
             variable_id = self.get_variable_id(line, program_ast)
             #obj_type = self.get_type(line, program_ast)
             #obj_value = self.get_value(line, program_ast)
-            desugared_line += (variable_id + " is the ' + type(" + variable_id + ") + ' ' + " + variable_id)
+            desugared_line += (variable_id + " is the ' + type(" + variable_id + ") + ' ' + str(" + variable_id + ")")
             #print variable_id
         output =  "print('" + desugared_line + ")\n"
         return output
