@@ -6,7 +6,7 @@ import inspect
 class Scriber(object):
     def __init__(self):
         self.show_line_num = True
-        self.api_calls = ['p']
+        self.api_calls = ['p', 'Scriber']
 
     def gen_line_mapping(self, program_file):
         line_mapping = {}
@@ -44,10 +44,13 @@ class Scriber(object):
     def gen_desugared(self, line_mapping, program_file, program_ast):
         desugared_copy_name = program_file[:-3] + "_desugared.py"
         desugared_copy = open(desugared_copy_name, 'w')
+        desugared_copy.write("import re\n") #Will be making some regex calls
         program = open(program_file, 'r')
 
         for line_num, line_content in enumerate(program.readlines()):
-            if line_content in line_mapping.values():
+            if "Scriber()" in line_content:
+                pass #Ignore this line
+            elif line_content in line_mapping.values():
                 desugared_copy.write(self.desugar_line(line_content[:-1], line_num, program_ast)) # don't want to include \n
             else:
                 desugared_copy.write(line_content)
@@ -69,7 +72,7 @@ class Scriber(object):
             desugared_line = "From line " + str(line_num) + ": "
         else:
             desugared_line = ""
-        function = [api_call for api_call in self.api_calls if api_call in line]
+        function = [api_call for api_call in self.api_calls if ("." + api_call) in line]
         assert len(function) == 1 # For now just one function call per line
         if function[0] == "p":
             desugared_line += self.scribe(line, program_ast)
@@ -81,7 +84,8 @@ class Scriber(object):
 
     def scribe(self, line, program_ast):
         variable_id = self.get_variable_id(line, program_ast)
-        return variable_id + " is the ' + type(" + variable_id + ") + ' ' + str(" + variable_id + ")"
+        regex_section = "re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" + variable_id + "))).group()[1:-1]"
+        return variable_id + " is the ' + " + regex_section + " + ' ' + str(" + variable_id + ")"
 
 def get_indentation(line):
     return line[:len(line)-len(line.strip())]

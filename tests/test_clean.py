@@ -1,5 +1,4 @@
 def main():
-    ps = pyscriber.Scriber()
     x = 5
     y = "hello"
     y = "world"
