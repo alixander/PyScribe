@@ -9,6 +9,7 @@ class Scriber(object):
         self.api_calls = ['p', 'Scriber']
 
     def gen_line_mapping(self, program_file):
+        """Return a dictionary of lines as keys and the corresponding api call lines as values"""
         line_mapping = {}
         program = open(program_file, 'r')
 
@@ -22,6 +23,7 @@ class Scriber(object):
         return line_mapping
 
     def gen_clean_copy(self, program_file, line_mapping):
+        """Generate and return a clean copy of the file with all references of pyscriber removed"""
         program = open(program_file, 'r')
         clean_copy_name = program_file[:-3] + "_clean.py"
         clean_copy = open(clean_copy_name, 'w')
@@ -42,6 +44,7 @@ class Scriber(object):
         return ast_output
 
     def gen_desugared(self, line_mapping, program_file, program_ast):
+        """Generate a desugared version that Python understands from one with PyScriber API calls"""
         desugared_copy_name = program_file[:-3] + "_desugared.py"
         desugared_copy = open(desugared_copy_name, 'w')
         desugared_copy.write("import re\n") #Will be making some regex calls
@@ -60,10 +63,12 @@ class Scriber(object):
         return desugared_copy_name
 
     def get_variable_id(self, line, program_ast):
+        """Return the variable id by finding the line in the program AST and gettings its argument"""
         parsed_line = ast.dump(ast.parse(line).body[0])
         for node in ast.walk(program_ast):
             if parsed_line == ast.dump(node):
                 return node.value.args[0].id
+        raise KeyError("Was not able to find variable ID")
 
     def desugar_line(self, line, line_num, program_ast):
         indentation = get_indentation(line)
@@ -83,9 +88,10 @@ class Scriber(object):
         return output
 
     def scribe(self, line, program_ast):
+        """The internal method called for basic printing of identifer, type, and value"""
         variable_id = self.get_variable_id(line, program_ast)
-        regex_section = "re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" + variable_id + "))).group()[1:-1]"
-        return variable_id + " is the ' + " + regex_section + " + ' ' + str(" + variable_id + ")"
+        variable_type = "re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" + variable_id + "))).group()[1:-1]"
+        return variable_id + " is the ' + " + variable_type + " + ' ' + str(" + variable_id + ")"
 
 def get_indentation(line):
     return line[:len(line)-len(line.strip())]
