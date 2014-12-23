@@ -6,17 +6,14 @@ import time
 import subprocess
 
 def run_test(test_path):
-    start = time.time()
     command = "./pyscribe/pyscribe.py " + test_path
     subprocess.call(command, shell=True)
 
 def run_desugared(test_path):
-    start = time.time()
     command = "python " + test_path
     subprocess.call(command, shell=True)
 
 def run_comparison(output, correct):
-    start = time.time()
     diff = difflib.unified_diff(open(output,'U').readlines(),
                                 open(correct,'U').readlines())
     for line in diff:
