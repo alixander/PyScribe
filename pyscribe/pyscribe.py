@@ -1,11 +1,42 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+pyscribe.py
+
+Copyright (c) 2014 Alexander Wang
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
 import sys
 import ast
 import re
 import inspect
 
+sys.path.append('.')
+import utils
+
 class Scriber(object):
     def __init__(self):
         self.show_line_num = True
+        self.save_logs = True
         self.api_calls = ['p', 'Scriber']
 
     def gen_line_mapping(self, program_file):
@@ -71,7 +102,7 @@ class Scriber(object):
         raise KeyError("Was not able to find variable ID")
 
     def desugar_line(self, line, line_num, program_ast):
-        indentation = get_indentation(line)
+        indentation = utils.get_indentation(line)
         line = line[len(indentation):]
         if self.show_line_num:
             desugared_line = "From line " + str(line_num) + ": "
@@ -93,9 +124,6 @@ class Scriber(object):
         variable_type = "re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" + variable_id + "))).group()[1:-1]"
         return variable_id + " is the ' + " + variable_type + " + ' ' + str(" + variable_id + ")"
 
-def get_indentation(line):
-    return line[:len(line)-len(line.strip())]
-
 def main():
     scribe = Scriber()
     program_file = sys.argv[1]
@@ -105,6 +133,9 @@ def main():
     clean_copy = scribe.gen_clean_copy(program_file, line_mapping)
     program_ast = scribe.gen_ast(program_file)
     desugared_copy = scribe.gen_desugared(line_mapping, program_file, program_ast)
+    if scribe.save_logs:
+        pass
+        # TODO: scribe.log()
 
 if __name__=="__main__":
     main()
