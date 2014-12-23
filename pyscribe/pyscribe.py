@@ -83,7 +83,9 @@ class Scriber(object):
 
         for line_num, line_content in enumerate(program.readlines()):
             if "Scriber()" in line_content:
-                pass #Ignore this line
+                if self.save_logs:
+                    indentation = utils.get_indentation(line_content)
+                    desugared_copy.write(indentation + "pyscribe_log = open('pyscribe_logs.txt', 'w')\n") # Maybe append?
             elif line_content in line_mapping.values():
                 desugared_copy.write(self.desugar_line(line_content[:-1], line_num, program_ast)) # don't want to include \n
             else:
@@ -112,7 +114,14 @@ class Scriber(object):
         assert len(function) == 1 # For now just one function call per line
         if function[0] == "p":
             desugared_line += self.scribe(line, program_ast)
-        output =  "print('" + desugared_line + ")\n"
+
+        if self.save_logs:
+            action = "pyscribe_log.write('"
+            ending = "+ '\\n')\n"
+        else:
+            action = "print('"
+            ending = ")\n"
+        output =  action + desugared_line + ending
 
         if len(indentation) > 0:
             output = indentation + output
@@ -133,9 +142,6 @@ def main():
     clean_copy = scribe.gen_clean_copy(program_file, line_mapping)
     program_ast = scribe.gen_ast(program_file)
     desugared_copy = scribe.gen_desugared(line_mapping, program_file, program_ast)
-    if scribe.save_logs:
-        pass
-        # TODO: scribe.log()
 
 if __name__=="__main__":
     main()

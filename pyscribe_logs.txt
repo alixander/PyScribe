@@ -1,0 +1,2 @@
+From line 3: x is the int 5
+From line 5: y is the str hello
