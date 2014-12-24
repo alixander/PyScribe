@@ -34,11 +34,12 @@ sys.path.append('.')
 import utils
 
 
+#TODO: Find the last API call, and close the log file if logging
 class Scriber(object):
     def __init__(self):
         self.show_line_num = True
         self.save_logs = True
-        self.api_calls = ['p', 'Scriber']
+        self.api_calls = ['p', 'watch', 'Scriber']
 
     def gen_line_mapping(self, program_file):
         """Return a dictionary of lines as keys and
@@ -98,6 +99,7 @@ class Scriber(object):
             elif line_content in line_mapping.values():
                 desugared_copy.write(self.desugar_line(line_content[:-1],
                                      line_num,
+                                     program_file,
                                      program_ast))  # don't want to include \n
             else:
                 desugared_copy.write(line_content)
@@ -106,17 +108,7 @@ class Scriber(object):
         desugared_copy.close()
         return desugared_copy_name
 
-    def get_variable_id(self, line, program_ast):
-        """Return the variable id by finding the line in the program AST
-        and gettings its argument
-        """
-        parsed_line = ast.dump(ast.parse(line).body[0])
-        for node in ast.walk(program_ast):
-            if parsed_line == ast.dump(node):
-                return node.value.args[0].id
-        raise KeyError("Was not able to find variable ID")
-
-    def desugar_line(self, line, line_num, program_ast):
+    def desugar_line(self, line, line_num, program_file, program_ast):
         indentation = utils.get_indentation(line)
         line = line[len(indentation):]
         if self.show_line_num:
@@ -125,9 +117,12 @@ class Scriber(object):
             desugared_line = ""
         function = [api_call for api_call in self.api_calls
                     if ("." + api_call) in line]
+
         assert len(function) == 1  # For now just one function call per line
         if function[0] == "p":
             desugared_line += self.scribe(line, program_ast)
+        elif function[0] == "watch":
+            desugared_line += self.watch(line, program_file, program_ast)
 
         if self.save_logs:
             action = "pyscribe_log.write('"
@@ -145,16 +140,18 @@ class Scriber(object):
         """The internal method called for basic printing of
         identifer, type, and value
         """
-        variable_id = self.get_variable_id(line, program_ast)
-        variable_type = ("re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" +
-                         variable_id +
-                         "))).group()[1:-1]")
+        variable_id, variable_type = utils.get_id_and_type(line, program_ast)
         return (variable_id +
                 " is the ' + " +
                 variable_type +
                 " + ' ' + str(" +
                 variable_id +
                 ")")
+
+    def watch(self, line, program_file, program_ast):
+        variable_id, variable_type = utils.get_id_and_type(line, program_ast)
+        lines = utils.lines_variable_changed(variable_id, program_file)
+        return "Watching variable " + variable_id + "'"
 
 
 def main():

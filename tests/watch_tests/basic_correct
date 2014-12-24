@@ -1,2 +1,3 @@
-From line 3: x is the int 5
-From line 5: y is the str hello
+From line 4: Watching variable x
+From line 5: x changed from int 5 to int 3
+From line 7: x changed from int 3 to int 7
