@@ -40,6 +40,9 @@ class Scriber(object):
         self.show_line_num = True
         self.save_logs = True
         self.api_calls = ['p', 'watch', 'Scriber']
+        # TODO: Maybe modularize into separate Watcher class?
+        self.watching = []  # List of variable ids watching
+        self.watch_lines = {}  # Map of variable id to list of lines changed
 
     def gen_line_mapping(self, program_file):
         """Return a dictionary of lines as keys and
@@ -91,16 +94,23 @@ class Scriber(object):
         program = open(program_file, 'r')
 
         for line_num, line_content in enumerate(program.readlines()):
-            if "Scriber()" in line_content:
+            if "Scriber()" in line_content:  # Line matches initial call
                 if self.save_logs:
                     indentation = utils.get_indentation(line_content)
                     desugared_copy.write(indentation +
                                          "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
-            elif line_content in line_mapping.values():
+            elif line_content in line_mapping.values():  # Line matches an API call
                 desugared_copy.write(self.desugar_line(line_content[:-1],
                                      line_num,
                                      program_file,
                                      program_ast))  # don't want to include \n
+            elif (len(self.watching) > 0 and
+                  line_num in sum(self.watch_lines.values(), [])):
+                desugared_copy.write(line_content)  # Keep original line
+                for var, lines in self.watch_lines.items():
+                    if line_num in lines:  # Should only be true once
+                        #TODO: finish this shit
+                        desugared_copy.write(self.variable_change(var))
             else:
                 desugared_copy.write(line_content)
 
@@ -122,7 +132,7 @@ class Scriber(object):
         if function[0] == "p":
             desugared_line += self.scribe(line, program_ast)
         elif function[0] == "watch":
-            desugared_line += self.watch(line, program_file, program_ast)
+            desugared_line += self.watch(line, line_num, program_file, program_ast)
 
         if self.save_logs:
             action = "pyscribe_log.write('"
@@ -148,9 +158,17 @@ class Scriber(object):
                 variable_id +
                 ")")
 
-    def watch(self, line, program_file, program_ast):
+    def variable_change(self, variable_id):
+        """A helper method for watch that handles each line that watch
+        identifies as a variable change"""
+        print(variable_id)
+
+    def watch(self, line, line_num, program_file, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
-        lines = utils.lines_variable_changed(variable_id, program_file)
+        self.watching.append(variable_id)
+        lines = filter(lambda x: x > line_num,
+                       utils.lines_variable_changed(variable_id, program_file))
+        self.watch_lines[variable_id] = lines
         return "Watching variable " + variable_id + "'"
 
 
