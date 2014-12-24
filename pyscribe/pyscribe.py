@@ -104,13 +104,17 @@ class Scriber(object):
                                      line_num,
                                      program_file,
                                      program_ast))  # don't want to include \n
-            elif (len(self.watching) > 0 and
+            elif (len(self.watching) > 0 and  # Line matches watched variable change
                   line_num in sum(self.watch_lines.values(), [])):
                 desugared_copy.write(line_content)  # Keep original line
                 for var, lines in self.watch_lines.items():
-                    if line_num in lines:  # Should only be true once
+                    if line_num in lines:
                         #TODO: finish this shit
-                        desugared_copy.write(self.variable_change(var))
+                        indentation = utils.get_indentation(line_content)
+                        desugared_copy.write(self.variable_change(var,
+                                                                  line_num,
+                                                                  indentation))
+                        break  # Should only be true once
             else:
                 desugared_copy.write(line_content)
 
@@ -118,28 +122,32 @@ class Scriber(object):
         desugared_copy.close()
         return desugared_copy_name
 
-    def desugar_line(self, line, line_num, program_file, program_ast):
-        indentation = utils.get_indentation(line)
-        line = line[len(indentation):]
-        if self.show_line_num:
-            desugared_line = "From line " + str(line_num+1) + ": "
-        else:
-            desugared_line = ""
-        function = [api_call for api_call in self.api_calls
-                    if ("." + api_call) in line]
-
-        assert len(function) == 1  # For now just one function call per line
-        if function[0] == "p":
-            desugared_line += self.scribe(line, program_ast)
-        elif function[0] == "watch":
-            desugared_line += self.watch(line, line_num, program_file, program_ast)
-
+    def action_and_ending(self, line_num):
         if self.save_logs:
             action = "pyscribe_log.write('"
             ending = "+ '\\n')\n"
         else:
             action = "print('"
             ending = ")\n"
+        if self.show_line_num:
+            action += "From line " + str(line_num+1) + ": "
+        return action, ending
+
+    def desugar_line(self, line, line_num, program_file, program_ast):
+        indentation = utils.get_indentation(line)
+        line = line[len(indentation):]
+        function = [api_call for api_call in self.api_calls
+                    if ("." + api_call) in line]
+
+        assert len(function) == 1  # For now just one function call per line
+        if function[0] == "p":
+            desugared_line = self.scribe(line, program_ast)
+        elif function[0] == "watch":
+            desugared_line = self.watch(line, line_num, program_file, program_ast)
+        else:
+            desugared_line = ""
+
+        action, ending = self.action_and_ending(line_num)
         output = action + desugared_line + ending
 
         if len(indentation) > 0:
@@ -158,10 +166,13 @@ class Scriber(object):
                 variable_id +
                 ")")
 
-    def variable_change(self, variable_id):
+    def variable_change(self, variable_id, line_num, indentation):
         """A helper method for watch that handles each line that watch
         identifies as a variable change"""
-        print(variable_id)
+        desugared = variable_id + " changed to ' + str(" + variable_id + ")"
+        action, ending = self.action_and_ending(line_num)
+        output = indentation + action + desugared + ending
+        return output
 
     def watch(self, line, line_num, program_file, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
@@ -169,7 +180,12 @@ class Scriber(object):
         lines = filter(lambda x: x > line_num,
                        utils.lines_variable_changed(variable_id, program_file))
         self.watch_lines[variable_id] = lines
-        return "Watching variable " + variable_id + "'"
+        return ("Watching variable " +
+                variable_id +
+                ", currently ' + " +
+                variable_type +
+                " + ' ' + str(" +
+                variable_id + ")")
 
 
 def main():
