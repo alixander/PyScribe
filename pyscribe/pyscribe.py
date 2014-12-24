@@ -120,7 +120,7 @@ class Scriber(object):
         indentation = utils.get_indentation(line)
         line = line[len(indentation):]
         if self.show_line_num:
-            desugared_line = "From line " + str(line_num) + ": "
+            desugared_line = "From line " + str(line_num+1) + ": "
         else:
             desugared_line = ""
         function = [api_call for api_call in self.api_calls
