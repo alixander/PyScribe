@@ -1,7 +1,0 @@
-----------------------------------------
-x is the int 5 at beginning of for loop at line 4
-From line 6: In iteration 0, x changed to 6
-From line 6: In iteration 1, x changed to 7
-From line 6: In iteration 2, x changed to 8
-From line 6: In iteration 3, x changed to 9
-From line 6: In iteration 4, x changed to 10
