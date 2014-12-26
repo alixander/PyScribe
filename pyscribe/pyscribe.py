@@ -165,6 +165,13 @@ class Scriber(object):
 
     def iterscribe(self, line, line_num, program_file, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
+        for node in ast.walk(program_ast):
+            if 'iter' in node._fields:  # Identify for loop
+                #TODO: See if this iterscribe is in that for loop
+                #TODO: Insert line before line number of for loop
+                #TODO: Change for loop into enumerating with index to keep iterations
+                print(node.lineno)
+                print(node.body)
         return "'"
 
     def scribe(self, line, program_ast):
