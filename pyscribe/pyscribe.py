@@ -40,6 +40,7 @@ class Scriber(object):
         self.show_line_num = True
         self.save_logs = True
         self.api_calls = ['p', 'watch', 'Scriber']
+        self.imports = ['re', 'pprint']
         # TODO: Maybe modularize into separate Watcher class?
         self.watching = []  # List of variable ids watching
         self.watch_lines = {}  # Map of variable id to list of lines changed
@@ -84,13 +85,17 @@ class Scriber(object):
         # print ast.dump(ast_output)
         return ast_output
 
+    def write_imports(f):
+        for imp in self.imports:
+            f.write("import " + imp + "\n")
+
     def gen_desugared(self, line_mapping, program_file, program_ast):
         """Generate a desugared version that Python understands
         from one with PyScriber API calls
         """
         desugared_copy_name = program_file[:-3] + "_desugared.py"
         desugared_copy = open(desugared_copy_name, 'w')
-        desugared_copy.write("import re\n")  # Will be making some regex calls
+        self.write_imports(desugared_copy)
         program = open(program_file, 'r')
 
         for line_num, line_content in enumerate(program.readlines()):
