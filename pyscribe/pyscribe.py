@@ -25,6 +25,9 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import uuid
+import random
+import string
 import sys
 import ast
 import re
@@ -190,8 +193,19 @@ class Scriber(object):
                                                             line_num,
                                                             program_ast,
                                                             indentation))
-                #TODO: Change for loop into enumerating with index to keep iterations
-        return "'"
+                iterator_index = "".join(random.choice(string.ascii_uppercase) for _ in range(10))
+                iterator_update = indentation + iterator_index + " += 1\n"
+                self.desugared_lines.insert(node.lineno, indentation[:-4] + iterator_index + " = -1\n")
+                self.desugared_lines.append(iterator_update)
+                output = ("In iteration ' + str(" +
+                          iterator_index +
+                          ") + ', " +
+                          variable_id +
+                          " changed to ' + str(" +
+                          variable_id +
+                          ") ")
+                return output
+        raise KeyError("Could not find for loop")
 
     def scribe(self, line, program_ast):
         """The internal method called for basic printing of
