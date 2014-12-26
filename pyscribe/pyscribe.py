@@ -129,6 +129,11 @@ class Scriber(object):
         desugared_copy.close()
         return desugared_copy_name
 
+    def from_line(self, line_num):
+        if self.show_line_num:
+            return "From line " + str(line_num+1) + ": "
+        return ""
+
     def action_and_ending(self, line_num):
         if self.save_logs:
             action = "pyscribe_log.write('"
@@ -136,8 +141,6 @@ class Scriber(object):
         else:
             action = "print('"
             ending = ")\n"
-        if self.show_line_num:
-            action += "From line " + str(line_num+1) + ": "
         return action, ending
 
     def desugar_line(self, line, line_num, program_file, program_ast):
@@ -152,26 +155,42 @@ class Scriber(object):
         elif function[0] == "watch":
             desugared_line = self.watch(line, line_num, program_file, program_ast)
         elif function[0] == "iterscribe":
-            desugared_line = self.iterscribe(line, line_num, program_file, program_ast)
+            desugared_line = self.iterscribe(line, line_num, indentation, program_ast)
         else:
             desugared_line = ""
 
         action, ending = self.action_and_ending(line_num)
-        output = action + desugared_line + ending
+        output = action + self.from_line(line_num) + desugared_line + ending
 
         if len(indentation) > 0:
             output = indentation + output
         return output
 
-    def iterscribe(self, line, line_num, program_file, program_ast):
+    def iter_start(self, node, line, line_num, program_ast, indentation):
+        action, ending = self.action_and_ending(line_num)
+        text = ("' + '" +
+                self.scribe(line, program_ast) +
+                " + ' at beginning of for loop at line " +
+                str(node.lineno) +
+                "' ")
+        return (indentation[:-4] +
+                action +
+                utils.draw_line() +
+                text +
+                ending)
+
+    def iterscribe(self, line, line_num, indentation, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
         for node in ast.walk(program_ast):
-            if 'iter' in node._fields:  # Identify for loop
-                #TODO: See if this iterscribe is in that for loop
-                #TODO: Insert line before line number of for loop
+            if ('iter' in node._fields and
+                ast.dump(ast.parse(line).body[0]) in ast.dump(node)):
+                self.desugared_lines.insert(node.lineno-1,
+                                            self.iter_start(node,
+                                                            line,
+                                                            line_num,
+                                                            program_ast,
+                                                            indentation))
                 #TODO: Change for loop into enumerating with index to keep iterations
-                print(node.lineno)
-                print(node.body)
         return "'"
 
     def scribe(self, line, program_ast):
@@ -191,7 +210,7 @@ class Scriber(object):
         identifies as a variable change"""
         desugared = variable_id + " changed to ' + str(" + variable_id + ")"
         action, ending = self.action_and_ending(line_num)
-        output = indentation + action + desugared + ending
+        output = indentation + action + self.from_line(line_num) + desugared + ending
         return output
 
     def watch(self, line, line_num, program_file, program_ast):

@@ -1,6 +1,12 @@
 import ast
 import re
 
+def draw_line(unit="-"):
+    output = ""
+    for _ in xrange(30):
+        output += unit
+    return output + "\\n"
+
 def get_indentation(line):
     return line[:len(line)-len(line.lstrip())]
 
