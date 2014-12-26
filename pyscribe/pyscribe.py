@@ -42,7 +42,8 @@ class Scriber(object):
     def __init__(self):
         self.show_line_num = True
         self.save_logs = True
-        self.api_calls = ['p', 'watch', 'iterscribe', 'Scriber']
+        # p for print, d for distinguish
+        self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
         self.desugared_lines = []
         # TODO: Maybe modularize into separate Watcher class?
@@ -159,6 +160,8 @@ class Scriber(object):
             desugared_line = self.watch(line, line_num, program_file, program_ast)
         elif function[0] == "iterscribe":
             desugared_line = self.iterscribe(line, line_num, indentation, program_ast)
+        elif function[0] == "d":
+            desugared_line = self.distinguish(line, program_ast)
         else:
             desugared_line = ""
 
@@ -168,6 +171,15 @@ class Scriber(object):
         if len(indentation) > 0:
             output = indentation + output
         return output
+
+    def distinguish(self, line, program_ast):
+        unit = utils.get_distinguish_unit(line, program_ast)
+        return ("\\n" +
+                utils.draw_line(unit=unit) +
+                self.scribe(line, program_ast) +
+                " + '\\n" +
+                utils.draw_line(unit=unit) +
+                "'")
 
     def iter_start(self, node, line, line_num, program_ast, indentation):
         action, ending = self.action_and_ending(line_num)

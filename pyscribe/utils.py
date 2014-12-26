@@ -27,6 +27,13 @@ def get_id_and_type(line, program_ast):
                      "))).group()[1:-1]")
     return (variable_id, variable_type)
 
+def get_distinguish_unit(line, program_ast):
+    parsed_line = ast.dump(ast.parse(line).body[0])
+    for node in ast.walk(program_ast):
+        if parsed_line == ast.dump(node) and node.value.keywords:
+            return node.value.keywords[0].value.s
+    return "-"
+
 def lines_variable_changed(variable_id, program_file):
     lines = []
     program = open(program_file, 'r')
