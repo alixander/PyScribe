@@ -39,8 +39,9 @@ class Scriber(object):
     def __init__(self):
         self.show_line_num = True
         self.save_logs = True
-        self.api_calls = ['p', 'watch', 'Scriber']
+        self.api_calls = ['p', 'watch', 'iterscribe', 'Scriber']
         self.imports = ['re', 'pprint']
+        self.desugared_lines = []
         # TODO: Maybe modularize into separate Watcher class?
         self.watching = []  # List of variable ids watching
         self.watch_lines = {}  # Map of variable id to list of lines changed
@@ -85,7 +86,7 @@ class Scriber(object):
         # print ast.dump(ast_output)
         return ast_output
 
-    def write_imports(f):
+    def write_imports(self, f):
         for imp in self.imports:
             f.write("import " + imp + "\n")
 
@@ -102,28 +103,29 @@ class Scriber(object):
             if "Scriber()" in line_content:  # Line matches initial call
                 if self.save_logs:
                     indentation = utils.get_indentation(line_content)
-                    desugared_copy.write(indentation +
-                                         "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
+                    desugared_line = (indentation +
+                                     "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
+                    self.desugared_lines.append(desugared_line)
             elif line_content in line_mapping.values():  # Line matches an API call
-                desugared_copy.write(self.desugar_line(line_content[:-1],
-                                     line_num,
-                                     program_file,
-                                     program_ast))  # don't want to include \n
+                self.desugared_lines.append(self.desugar_line(line_content[:-1],
+                                            line_num,
+                                            program_file,
+                                            program_ast))  # don't want to include \n
             elif (len(self.watching) > 0 and  # Line matches watched variable change
                   line_num in sum(self.watch_lines.values(), [])):
-                desugared_copy.write(line_content)  # Keep original line
+                self.desugared_lines.append(line_content)
                 for var, lines in self.watch_lines.items():
                     if line_num in lines:
-                        #TODO: finish this shit
                         indentation = utils.get_indentation(line_content)
-                        desugared_copy.write(self.variable_change(var,
-                                                                  line_num,
-                                                                  indentation))
+                        self.desugared_lines.append(self.variable_change(var,
+                                                                         line_num,
+                                                                         indentation))
                         break  # Should only be true once
             else:
-                desugared_copy.write(line_content)
-
+                self.desugared_lines.append(line_content)
         program.close()
+        for line in self.desugared_lines:
+            desugared_copy.write(line)
         desugared_copy.close()
         return desugared_copy_name
 
@@ -149,6 +151,8 @@ class Scriber(object):
             desugared_line = self.scribe(line, program_ast)
         elif function[0] == "watch":
             desugared_line = self.watch(line, line_num, program_file, program_ast)
+        elif function[0] == "iterscribe":
+            desugared_line = self.iterscribe(line, line_num, program_file, program_ast)
         else:
             desugared_line = ""
 
@@ -158,6 +162,10 @@ class Scriber(object):
         if len(indentation) > 0:
             output = indentation + output
         return output
+
+    def iterscribe(self, line, line_num, program_file, program_ast):
+        variable_id, variable_type = utils.get_id_and_type(line, program_ast)
+        return "'"
 
     def scribe(self, line, program_ast):
         """The internal method called for basic printing of

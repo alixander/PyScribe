@@ -16,8 +16,15 @@ def run_desugared(test_path):
 def run_comparison(output, correct):
     diff = difflib.unified_diff(open(output,'U').readlines(),
                                 open(correct,'U').readlines())
+    failed = False
     for line in diff:
-        if len(line) > 0: exit("Comparison failed")
+        if len(line) > 0:
+            failed = True
+            break
+    if failed:
+        print("Comparison failed")
+    else:
+        print("Test passed")
 
 tests_directory = "tests" + os.sep
 test_modules = os.listdir(tests_directory)
@@ -44,5 +51,5 @@ for module in test_modules:
         output_test_file = "pyscribe_logs.txt"
         run_comparison(output_test_file, correct_file_path)
 
-        print("Test passed in " + str(time.time()-start) + "ms\n")
+        print("Test finished in " + str(time.time()-start) + "ms\n")
 print("-----Finished running all tests-----\n")

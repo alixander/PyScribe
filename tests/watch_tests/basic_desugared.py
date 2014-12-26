@@ -1,4 +1,5 @@
 import re
+import pprint
 def main():
     pyscribe_log = open('pyscribe_logs.txt', 'w')
     x = 5
