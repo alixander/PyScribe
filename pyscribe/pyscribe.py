@@ -264,7 +264,7 @@ class Scriber(object):
 
 def main():
     scribe = Scriber()
-    if len(sys.argv != 2):
+    if len(sys.argv) != 2:
         raise KeyError("Please pass in only one python file as the single argument")
     program_file = sys.argv[1]
     if ".py" != program_file[-3:]:
