@@ -10,5 +10,6 @@ def main():
     x = 7
     pyscribe_log.write('From line 7: x changed to ' + str(x)+ '\n')
 
+    pyscribe_log.close()
 if __name__=="__main__":
     main()

@@ -11,5 +11,6 @@ def main():
     b = {1: "a", 2: "b"}
     pyscribe_log.write('From line 10: b is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(b))).group()[1:-1] + ' ' + str(b)+ '\n')
 
+    pyscribe_log.close()
 if __name__=="__main__":
     main()

@@ -37,7 +37,6 @@ sys.path.append('.')
 import utils
 
 
-#TODO: Find the last API call, and close the log file if logging
 class Scriber(object):
     def __init__(self):
         self.show_line_num = True
@@ -46,6 +45,7 @@ class Scriber(object):
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
         self.desugared_lines = []
+        self.offset = 0
         # TODO: Maybe modularize into separate Watcher class?
         self.watching = []  # List of variable ids watching
         self.watch_lines = {}  # Map of variable id to list of lines changed
@@ -102,14 +102,20 @@ class Scriber(object):
         desugared_copy = open(desugared_copy_name, 'w')
         self.write_imports(desugared_copy)
         program = open(program_file, 'r')
+        first_call_indentation = ""
+        closing_line_num = 0
 
         for line_num, line_content in enumerate(program.readlines()):
+            indentation = utils.get_indentation(line_content)
+            if (first_call_indentation != "" and
+                    len(indentation) < len(first_call_indentation)):
+                closing_line_num = line_num
             if "Scriber()" in line_content:  # Line matches initial call
                 if self.save_logs:
-                    indentation = utils.get_indentation(line_content)
                     desugared_line = (indentation +
                                      "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
                     self.desugared_lines.append(desugared_line)
+                    first_call_indentation = indentation
             elif line_content in line_mapping.values():  # Line matches an API call
                 self.desugared_lines.append(self.desugar_line(line_content[:-1],
                                             line_num,
@@ -120,13 +126,16 @@ class Scriber(object):
                 self.desugared_lines.append(line_content)
                 for var, lines in self.watch_lines.items():
                     if line_num in lines:
-                        indentation = utils.get_indentation(line_content)
                         self.desugared_lines.append(self.variable_change(var,
                                                                          line_num,
                                                                          indentation))
                         break  # Should only be true once
             else:
                 self.desugared_lines.append(line_content)
+        if self.save_logs:
+            closing_line = (first_call_indentation +
+                            "pyscribe_log.close()\n")
+            self.desugared_lines.insert(closing_line_num + self.offset, closing_line)
         program.close()
         for line in self.desugared_lines:
             desugared_copy.write(line)
@@ -208,6 +217,7 @@ class Scriber(object):
                 iterator_index = "".join(random.choice(string.ascii_uppercase) for _ in range(10))
                 iterator_update = indentation + iterator_index + " += 1\n"
                 self.desugared_lines.insert(node.lineno, indentation[:-4] + iterator_index + " = -1\n")
+                self.offset += 2
                 self.desugared_lines.append(iterator_update)
                 output = ("In iteration ' + str(" +
                           iterator_index +
@@ -244,6 +254,7 @@ class Scriber(object):
         self.watching.append(variable_id)
         lines = filter(lambda x: x > line_num,
                        utils.lines_variable_changed(variable_id, program_file))
+        self.offset += len(lines)
         self.watch_lines[variable_id] = lines
         return ("Watching variable " +
                 variable_id +
