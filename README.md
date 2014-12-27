@@ -12,6 +12,10 @@ $ pip install pyscribe
 
 Usage
 ------
+1. Include `import pyscribe` at the top of the files you are debugging.
+2. Initialize a variable of your choice to `pyscriber.Scribe()` (E.g.: `ps = pyscriber.Scribe()`)
+3. Make API calls as needed. (E.g.: `ps.p(x)`)
+4. Run
 ```bash
 $ pyscribe myfile.py
  ```
