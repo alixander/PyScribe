@@ -36,6 +36,23 @@ import inspect
 sys.path.append('.')
 import utils
 
+# TODO: Implement Runner to allow user to use original file
+class Runner(object):
+    def __init__(self):
+        pass
+
+    def p(self, obj):
+        pass
+
+    def watch(self, obj):
+        pass
+
+    def iterscribe(self, obj):
+        pass
+
+    def d(self, obj, unit="-"):
+        pass
+
 
 class Scriber(object):
     def __init__(self):

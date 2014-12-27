@@ -3,11 +3,21 @@ PyScribe
 
 A Python library to make debugging with print statements simpler and more effective.
 
+*Warning*: This project is currently in a pre-release state.
+
 Installation
 ------------
 To install pyscribe:
 ```bash
 $ pip install pyscribe
+```
+It may be necessary to have root privileges, in which case:
+```bash
+$ sudo pip install pyscribe
+```
+To uninstall:
+```bash
+$ pip uninstall pyscribe
 ```
 
 Usage
