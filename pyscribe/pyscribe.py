@@ -102,15 +102,16 @@ class Scriber(object):
         self.write_imports(desugared_copy)
         program = open(program_file, 'r')
         first_call_indentation = ""
-        closing_line_num = 0
+        closing_line_added = False
 
         for line_num, line_content in enumerate(program.readlines()):
             indentation = utils.get_indentation(line_content)
-            if (first_call_indentation != "" and
+            if (not closing_line_added and
+                    first_call_indentation != "" and
                     len(indentation) < len(first_call_indentation)):
-
                 closing_line = (first_call_indentation +
                                 "pyscribe_log.close()\n")
+                closing_line_added = True
                 self.desugared_lines.append(closing_line)
             if "Scriber()" in line_content:  # Line matches initial call
                 if self.save_logs:
@@ -134,7 +135,7 @@ class Scriber(object):
                         break  # Should only be true once
             else:
                 self.desugared_lines.append(line_content)
-        if first_call_indentation == "":
+        if not closing_line_added:
             self.desugared_lines.append("pyscribe_log.close()\n")
         program.close()
         for line in self.desugared_lines:
