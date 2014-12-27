@@ -1,22 +1,24 @@
 PyScribe
 =====================
 
-#####A Python library to make debugging with print statements simpler and more effective.
+A Python library to make debugging with print statements simpler and more effective.
 
-###Implementation Details:
-1. Make API calls in your program as needed
-2. Run `python pyscribe.py test.py`
-3. PyScribe creates 3 temporary files:
-    - A record of where each line of pyscribe is called
-    - A version of the file with every pyscribe call removed
-    - An AST made in the compilation of the above file
-4. PyScribe analyzes the AST (3rd file) & call to line mapping (1st file) and replaces the clean version (2nd file) with desugared calls.
-    - Example: `pyscribe.scribe(x)` becomes `logs.write('From line ' + get_line(call_index) + ': x is the ' + type(x) + ' ' + x`
-    - Example: `for i in xrange(5): pyscribe.iterscribe(i)` becomes
-                `for pyscribe_enum, i in enumerate(xrange(5)): logs.write('Iteration ' + pyscribe_enum + ': i is the ' + type(i) + ' ' + i`
-5. A "test_desugared.py" will be the output (and is the one intended to be run, maybe with a --run flag or something in the future)
+Installation
+------------
+To install pyscribe:
+```bash
+$ pip install pyscribe
+```
 
-###API Calls:
+Usage
+------
+```bash
+$ pyscribe myfile.py
+ ```
+ This outputs a myfile_desugared.py, which is intended to be run to debug.
+
+API Calls
+----------
 - `pyscribe.scribe(object, label=None)` -- Logs the object value with relevant info dependent on type
 - `pyscribe.is_debugging(boolean)` -- Enable or disable the library
 - `pyscribe.log_lines(boolean)` -- Insert a "from line xx" before each line
@@ -28,7 +30,8 @@ PyScribe
 - `pyscribe.distinguish(object, unit="*")` -- Distinguish the log with a clear separator defined by the unit
 - `pyscribe.filter_labels(list)` -- Only log the pyscribe.scribe calls that are labeled with a label in the list
 
-###Example:
+Example
+--------
 #####test.py:
 ```python
 import pyscribe
