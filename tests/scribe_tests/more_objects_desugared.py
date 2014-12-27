@@ -10,6 +10,7 @@ def main():
     pyscribe_log.write('From line 8: a is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(a))).group()[1:-1] + ' ' + str(a)+ '\n')
     b = {1: "a", 2: "b"}
     pyscribe_log.write('From line 10: b is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(b))).group()[1:-1] + ' ' + str(b)+ '\n')
+    pyscribe_log.close()
 
     pyscribe_log.close()
 if __name__=="__main__":

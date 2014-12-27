@@ -45,7 +45,6 @@ class Scriber(object):
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
         self.desugared_lines = []
-        self.offset = 0
         # TODO: Maybe modularize into separate Watcher class?
         self.watching = []  # List of variable ids watching
         self.watch_lines = {}  # Map of variable id to list of lines changed
@@ -109,7 +108,10 @@ class Scriber(object):
             indentation = utils.get_indentation(line_content)
             if (first_call_indentation != "" and
                     len(indentation) < len(first_call_indentation)):
-                closing_line_num = line_num
+
+                closing_line = (first_call_indentation +
+                                "pyscribe_log.close()\n")
+                self.desugared_lines.append(closing_line)
             if "Scriber()" in line_content:  # Line matches initial call
                 if self.save_logs:
                     desugared_line = (indentation +
@@ -132,10 +134,6 @@ class Scriber(object):
                         break  # Should only be true once
             else:
                 self.desugared_lines.append(line_content)
-        if self.save_logs:
-            closing_line = (first_call_indentation +
-                            "pyscribe_log.close()\n")
-            self.desugared_lines.insert(closing_line_num + self.offset, closing_line)
         program.close()
         for line in self.desugared_lines:
             desugared_copy.write(line)
@@ -217,7 +215,6 @@ class Scriber(object):
                 iterator_index = "".join(random.choice(string.ascii_uppercase) for _ in range(10))
                 iterator_update = indentation + iterator_index + " += 1\n"
                 self.desugared_lines.insert(node.lineno, indentation[:-4] + iterator_index + " = -1\n")
-                self.offset += 2
                 self.desugared_lines.append(iterator_update)
                 output = ("In iteration ' + str(" +
                           iterator_index +
@@ -254,7 +251,6 @@ class Scriber(object):
         self.watching.append(variable_id)
         lines = filter(lambda x: x > line_num,
                        utils.lines_variable_changed(variable_id, program_file))
-        self.offset += len(lines)
         self.watch_lines[variable_id] = lines
         return ("Watching variable " +
                 variable_id +

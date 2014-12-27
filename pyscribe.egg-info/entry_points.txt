@@ -1,0 +1,3 @@
+[console_scripts]
+pyscribe = pyscribe.pyscribe:main
+

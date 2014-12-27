@@ -1,0 +1,10 @@
+setup.cfg
+setup.py
+pyscribe/__init__.py
+pyscribe/pyscribe.py
+pyscribe/utils.py
+pyscribe.egg-info/PKG-INFO
+pyscribe.egg-info/SOURCES.txt
+pyscribe.egg-info/dependency_links.txt
+pyscribe.egg-info/entry_points.txt
+pyscribe.egg-info/top_level.txt
