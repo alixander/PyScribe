@@ -53,6 +53,27 @@ class Scriber(object):
         pass
 
 
+class Watcher(object):
+    def __init__(self):
+        self.watching = []
+        self.watch_lines = {}
+
+    def watch_var(self, var):
+        self.watching.append(var)
+
+    def num_watched(self):
+        return len(self.watching)
+
+    def set_lines(self, var, lines):
+        self.watch_lines[var] = lines
+
+    def new_line_nums(self):
+        return sum(self.watch_lines.values(), [])
+
+    def vars_and_lines(self):
+        return self.watch_lines.items()
+
+
 class Runner(object):
     def __init__(self):
         self.show_line_num = True
@@ -61,9 +82,7 @@ class Runner(object):
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
         self.desugared_lines = []
-        # TODO: Maybe modularize into separate Watcher class?
-        self.watching = []  # List of variable ids watching
-        self.watch_lines = {}  # Map of variable id to list of lines changed
+        self.watcher = Watcher()
 
     def gen_line_mapping(self, program_file):
         """Return a dictionary of lines as keys and
@@ -102,7 +121,6 @@ class Runner(object):
         f = open(program_file, 'r')
         ast_output = ast.parse(f.read())
         f.close()
-        # print ast.dump(ast_output)
         return ast_output
 
     def write_imports(self, f):
@@ -140,10 +158,10 @@ class Runner(object):
                                             line_num,
                                             program_file,
                                             program_ast))  # don't want to include \n
-            elif (len(self.watching) > 0 and  # Line matches watched variable change
-                  line_num in sum(self.watch_lines.values(), [])):
+            elif (self.watcher.num_watched() > 0 and  # Line matches watched variable change
+                  line_num in self.watcher.new_line_nums()):
                 self.desugared_lines.append(line_content)
-                for var, lines in self.watch_lines.items():
+                for var, lines in self.watcher.vars_and_lines():
                     if line_num in lines:
                         self.desugared_lines.append(self.variable_change(var,
                                                                          line_num,
@@ -267,10 +285,10 @@ class Runner(object):
 
     def watch(self, line, line_num, program_file, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
-        self.watching.append(variable_id)
+        self.watcher.watch_var(variable_id)
         lines = filter(lambda x: x > line_num,
                        utils.lines_variable_changed(variable_id, program_file))
-        self.watch_lines[variable_id] = lines
+        self.watcher.set_lines(variable_id, lines)
         return ("Watching variable " +
                 variable_id +
                 ", currently ' + " +
