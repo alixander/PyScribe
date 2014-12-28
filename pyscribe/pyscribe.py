@@ -36,8 +36,7 @@ import inspect
 sys.path.append('.')
 import utils
 
-# TODO: Implement Runner to allow user to use original file
-class Runner(object):
+class Scriber(object):
     def __init__(self):
         pass
 
@@ -54,7 +53,7 @@ class Runner(object):
         pass
 
 
-class Scriber(object):
+class Runner(object):
     def __init__(self):
         self.show_line_num = True
         self.save_logs = True
@@ -281,7 +280,7 @@ class Scriber(object):
 
 
 def main():
-    scribe = Scriber()
+    scribe = Runner()
     if len(sys.argv) != 2:
         raise KeyError("Please pass in only one python file as the single argument")
     program_file = sys.argv[1]
