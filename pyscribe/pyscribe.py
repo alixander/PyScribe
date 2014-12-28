@@ -33,6 +33,7 @@ import sys
 import ast
 import re
 import inspect
+import subprocess
 
 sys.path.append('.')
 import utils
@@ -142,6 +143,7 @@ class Runner(object):
         for line_num, line_content in enumerate(program.readlines()):
             indentation = utils.get_indentation(line_content)
             if (not closing_line_added and
+                    self.save_logs and
                     first_call_indentation != "" and
                     len(indentation) < len(first_call_indentation)):
                 closing_line = (first_call_indentation +
@@ -170,7 +172,7 @@ class Runner(object):
                         break  # Should only be true once
             else:
                 self.desugared_lines.append(line_content)
-        if not closing_line_added:
+        if not closing_line_added and self.save_logs:
             self.desugared_lines.append("pyscribe_log.close()\n")
         program.close()
         for line in self.desugared_lines:
@@ -322,6 +324,8 @@ def main():
     desugared_copy = scribe.gen_desugared(line_mapping,
                                           program_file,
                                           program_ast)
+    if args.run:
+        subprocess.call(['python', desugared_copy])
 
 if __name__ == "__main__":
     main()
