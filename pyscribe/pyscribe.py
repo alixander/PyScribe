@@ -25,6 +25,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
+import argparse
 import uuid
 import random
 import string
@@ -77,7 +78,7 @@ class Watcher(object):
 class Runner(object):
     def __init__(self):
         self.show_line_num = True
-        self.save_logs = True
+        self.save_logs = False
         # p for print, d for distinguish
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
@@ -296,14 +297,25 @@ class Runner(object):
                 " + ' ' + str(" +
                 variable_id + ")")
 
+def python_file_type(string):
+    if not string.endswith(".py"):
+        msg = "%r is not a Python file" % string
+        raise argparse.ArgumentTypeError(msg)
+    return string
+
+def process_args():
+    parser = argparse.ArgumentParser(description='Let PyScribe make print debugging easier and more efficient.')
+    parser.add_argument('python_file', metavar='f', type=python_file_type, nargs='+',
+                        help='The Python file with PyScribe API calls.')
+    parser.add_argument('-r', '--run', action='store_true',
+                        help='Run the desugared version')
+    return parser.parse_args()
 
 def main():
+    # TODO: Run if --run flag set
+    args = process_args()
     scribe = Runner()
-    if len(sys.argv) != 2:
-        raise KeyError("Please pass in only one python file as the single argument")
-    program_file = sys.argv[1]
-    if ".py" != program_file[-3:]:
-        raise KeyError("Please pass in a Python file as argument")
+    program_file = args.python_file[0]
     line_mapping = scribe.gen_line_mapping(program_file)
     clean_copy = scribe.gen_clean_copy(program_file, line_mapping)
     program_ast = scribe.gen_ast(program_file)

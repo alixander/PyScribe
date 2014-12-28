@@ -1,12 +1,11 @@
 import re
 import pprint
 def main():
-    pyscribe_log = open('pyscribe_logs.txt', 'w')
     x = 5
-    pyscribe_log.write('From line 4: x is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(x))).group()[1:-1] + ' ' + str(x)+ '\n')
+    print('From line 4: x is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(x))).group()[1:-1] + ' ' + str(x))
     y = "hello"
-    pyscribe_log.write('From line 6: y is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(y))).group()[1:-1] + ' ' + str(y)+ '\n')
-    pyscribe_log.close()
+    print('From line 6: y is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(y))).group()[1:-1] + ' ' + str(y))
 
 if __name__=="__main__":
     main()
+pyscribe_log.close()
