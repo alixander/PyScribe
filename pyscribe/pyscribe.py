@@ -79,7 +79,7 @@ class Watcher(object):
 class Runner(object):
     def __init__(self):
         self.show_line_num = True
-        self.save_logs = False
+        self.save_logs = True
         # p for print, d for distinguish
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
@@ -311,10 +311,13 @@ def process_args():
                         help='The Python file with PyScribe API calls.')
     parser.add_argument('-r', '--run', action='store_true',
                         help='Run the desugared version')
+    parser.add_argument('-c', '--clean', action='store_true',
+                        help='Produce a clean version of the file with all references to PyScribe removed')
+    parser.add_argument('-e', '--extraargs', nargs="+",
+                        help='Arguments intended to be passed to Python file when run. Must be called with --run set')
     return parser.parse_args()
 
 def main():
-    # TODO: Run if --run flag set
     args = process_args()
     scribe = Runner()
     program_file = args.python_file[0]
@@ -324,8 +327,13 @@ def main():
     desugared_copy = scribe.gen_desugared(line_mapping,
                                           program_file,
                                           program_ast)
+    if not args.clean:
+        subprocess.call(['rm', clean_copy])
     if args.run:
-        subprocess.call(['python', desugared_copy])
+        if args.extraargs:
+            subprocess.call(['python', desugared_copy, args.extraargs])
+        else:
+            subprocess.call(['python', desugared_copy])
 
 if __name__ == "__main__":
     main()
