@@ -21,6 +21,7 @@ def main():
 
     foo = 1234
     ps.d(foo)
+    ps.d(foo, unit="^")
 
     synonyms = {"clerk": "secretary", "student": "apprentice", "ground": "floor"}
     ps.p(synonyms)

@@ -13,4 +13,9 @@ From line 23:
 foo is the int 1234
 ----------------------------------------
 
-From line 26: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}
+From line 24: 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+foo is the int 1234
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+From line 27: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}

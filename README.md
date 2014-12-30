@@ -22,7 +22,7 @@ $ pip uninstall pyscribe
 
 Usage
 ------
-1. Include `import pyscribe` at the top of the files you are debugging.
+1. Include `from pyscribe import pyscribe` at the top of the files you are debugging.
 2. Initialize a variable of your choice to `pyscribe.Scriber()` (E.g.: `ps = pyscribe.Scriber()`)
 3. Make API calls as needed. (E.g.: `ps.p(x)`)
 4. Run
@@ -49,23 +49,23 @@ Argument Options
 
 API Calls
 ----------
-- `pyscribe.scribe(object, label=None)` -- Logs the object value with relevant info dependent on type
-- `pyscribe.log_lines(boolean)` -- Insert a "from line xx" before each line
-- `pyscribe.save_logs(boolean)` -- Save the logs with a timestamp in a file
+- `pyscribe.p(object, label=None)` -- Print the object value with relevant info dependent on type
 - `pyscribe.iterscribe(object)` -- Log the object value from inside a for or while loop which prints current iteration
 - `pyscribe.watch(object)` -- Log the object whenever its value changes
-- `pyscribe.distinguish(object, unit="*")` -- Distinguish the log with a clear separator defined by the unit
+- `pyscribe.d(object, unit="*")` -- Distinguish the log with a clear separator defined by the unit
 
 Planned
 ----------
 - `pyscribe.filter_labels(list)` -- Only log the pyscribe.scribe calls that are labeled with a label in the list
+- `pyscribe.save_logs(boolean)` -- Save the logs with a timestamp in a file (does this by default right now)
+- `pyscribe.log_lines(boolean)` -- Insert a "from line xx" before each line (does this by default right now)
 - `pyscribe.scribevalues(object)` -- Log the internal values of lists and dictionaries in a pretty way
 
 Example
 --------
 #####test.py:
 ```python
-import pyscribe
+from pyscribe import pyscribe
 
 def main():
     ps = pyscribe.Scriber()
@@ -75,14 +75,20 @@ def main():
     x = 5
     ps.p(x)
 
+    bar = "foo"
     for i in xrange(5):
-        ps.iterscribe(i)
+        bar += str(i)
+        ps.iterscribe(bar)
 
     y = "hello"
     ps.p(y)
     ps.watch(y)
 
     y = "world"
+
+    foo = 1234
+    ps.d(foo)
+    ps.d(foo, unit="^")
 
     synonyms = {"clerk": "secretary", "student": "apprentice", "ground": "floor"}
     ps.p(synonyms)
@@ -107,5 +113,10 @@ From line 23:
 foo is the int 1234
 ----------------------------------------
 
-From line 26: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}
+From line 24: 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+foo is the int 1234
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+From line 27: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}
 ```

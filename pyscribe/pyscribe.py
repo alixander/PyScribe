@@ -82,8 +82,10 @@ class Watcher(object):
 
 class Runner(object):
     def __init__(self):
+        # TODO: Parse file for user input value instead of hardcoding these
         self.show_line_num = True
         self.save_logs = True
+
         self.initialized = False
         # p for print, d for distinguish
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
