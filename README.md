@@ -23,26 +23,43 @@ $ pip uninstall pyscribe
 Usage
 ------
 1. Include `import pyscribe` at the top of the files you are debugging.
-2. Initialize a variable of your choice to `pyscriber.Scribe()` (E.g.: `ps = pyscriber.Scribe()`)
+2. Initialize a variable of your choice to `pyscribe.Scriber()` (E.g.: `ps = pyscribe.Scriber()`)
 3. Make API calls as needed. (E.g.: `ps.p(x)`)
 4. Run
 ```bash
-$ pyscribe myfile.py
+$ pyscribe myfile.py --run
  ```
- This outputs a myfile_desugared.py, which is intended to be run to debug.
+ This is the equivalent of running `$ python myfile.py` with all calls desugared.
+```bash
+$ pyscribe myfile.py --run --extraargs "-u asdf"
+```
+This is the equivalent of running `$ python myfile.py -u asdf` with all calls desugared.
+```bash
+$ pyscribe myfile.py --desugared
+```
+This does not run anything, but rather outputs a myfile_desugared.py, which is intended to be run to debug.
+
+
+Argument Options
+-----------------
+- `--run` -- Run the desugared version
+- `--extraargs` -- Arguments intended to be passed to Python file when run. Must be called with --run set
+- `--clean` -- Produce a clean version of the file with all references to PyScribe removed 
+- `--desugared` -- Produce a desugared version of the file with all API calls replaced with valid Python.
 
 API Calls
 ----------
 - `pyscribe.scribe(object, label=None)` -- Logs the object value with relevant info dependent on type
-- `pyscribe.is_debugging(boolean)` -- Enable or disable the library
 - `pyscribe.log_lines(boolean)` -- Insert a "from line xx" before each line
 - `pyscribe.save_logs(boolean)` -- Save the logs with a timestamp in a file
 - `pyscribe.iterscribe(object)` -- Log the object value from inside a for or while loop which prints current iteration
 - `pyscribe.watch(object)` -- Log the object whenever its value changes
-- `pyscribe.scribevalues(object)` -- Log the internal values of lists and dictionaries in a pretty way
-- `pyscribe.scribestate()` -- Log every variable within the current scope
 - `pyscribe.distinguish(object, unit="*")` -- Distinguish the log with a clear separator defined by the unit
+
+Planned
+----------
 - `pyscribe.filter_labels(list)` -- Only log the pyscribe.scribe calls that are labeled with a label in the list
+- `pyscribe.scribevalues(object)` -- Log the internal values of lists and dictionaries in a pretty way
 
 Example
 --------
@@ -75,12 +92,6 @@ y = "world" # From line xx: y changed from the string 'hello' to the string 'wor
 
 synonyms = {"clerk": "secretary", "student": "apprentice", "ground": "floor"}
 scriber.scribe(synonyms) # From line xx: synonyms is a dictionary of length 3
-scriber.scribevalues(synonyms) # From line xx: synonyms contains the following values:
-                                # ========================
-                                # 'clerk': 'secretary'
-                                # 'student': 'apprentice'
-                                # 'ground': 'floor'
-                                # ========================
 ```
 
 ####logs.txt:

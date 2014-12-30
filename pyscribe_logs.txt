@@ -1,3 +1,0 @@
-From line 4: Watching variable x, currently int 5
-From line 5: x changed to 3
-From line 7: x changed to 7

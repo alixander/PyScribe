@@ -55,6 +55,9 @@ class Scriber(object):
     def d(self, obj, unit="-"):
         pass
 
+    def save_logs(self, do_save):
+        pass
+
 
 class Watcher(object):
     def __init__(self):
@@ -150,18 +153,20 @@ class Runner(object):
                     self.save_logs and
                     self.initialized and
                     first_call_indentation != "" and
+                    len(line_content) > 2 and
                     len(indentation) < len(first_call_indentation)):
                 closing_line = (first_call_indentation +
                                 "pyscribe_log.close()\n")
                 closing_line_added = True
                 self.desugared_lines.append(closing_line)
             if "Scriber()" in line_content:  # Line matches initial call
-                self.initialized = True
                 if self.save_logs:
+                    self.initialized = True
                     desugared_line = (indentation +
                                      "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
                     self.desugared_lines.append(desugared_line)
                     first_call_indentation = indentation
+                self.desugared_lines.append(line_content)
             elif line_content in line_mapping.values():  # Line matches an API call
                 self.desugared_lines.append(self.desugar_line(line_content[:-1],
                                             line_num,
@@ -250,9 +255,10 @@ class Runner(object):
     def iterscribe(self, line, line_num, indentation, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
         for node in ast.walk(program_ast):
+            # TODO: handle nested for loops
             if ('iter' in node._fields and
                 ast.dump(ast.parse(line).body[0]) in ast.dump(node)):
-                self.desugared_lines.insert(node.lineno-1,
+                self.desugared_lines.insert(node.lineno,
                                             self.iter_start(node,
                                                             line,
                                                             line_num,
