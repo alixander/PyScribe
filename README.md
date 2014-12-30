@@ -25,15 +25,17 @@ Usage
 1. Include `from pyscribe import pyscribe` at the top of the files you are debugging.
 2. Initialize a variable of your choice to `pyscribe.Scriber()` (E.g.: `ps = pyscribe.Scriber()`)
 3. Make API calls as needed. (E.g.: `ps.p(x)`)
-4. Run
+4. Run one of the following commands
 ```bash
 $ pyscribe myfile.py --run
  ```
  This is the equivalent of running `$ python myfile.py` with all calls desugared.
+
 ```bash
 $ pyscribe myfile.py --run --extraargs "-u asdf"
 ```
 This is the equivalent of running `$ python myfile.py -u asdf` with all calls desugared.
+
 ```bash
 $ pyscribe myfile.py --desugared
 ```
