@@ -1,6 +1,6 @@
 import re
 import pprint
-import pyscribe
+from pyscribe import pyscribe
 
 def main():
     pyscribe_log = open('pyscribe_logs.txt', 'w')
@@ -11,20 +11,25 @@ def main():
     x = 5
     pyscribe_log.write('From line 9: x is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(x))).group()[1:-1] + ' ' + str(x)+ '\n')
 
-    BSGPBKPBDB = -1
-    pyscribe_log.write('----------------------------------------\n' + 'i is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(i))).group()[1:-1] + ' ' + str(i) + ' at beginning of for loop at line 11' + '\n')
+    bar = "foo"
+    RPJTLXILVA = -1
+    pyscribe_log.write('----------------------------------------\n' + 'bar is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(bar))).group()[1:-1] + ' ' + str(bar) + ' at beginning of for loop at line 12' + '\n')
     for i in xrange(5):
-        BSGPBKPBDB += 1
-        pyscribe_log.write('From line 12: In iteration ' + str(BSGPBKPBDB) + ', i changed to ' + str(i) + '\n')
+        bar += str(i)
+        RPJTLXILVA += 1
+        pyscribe_log.write('From line 14: In iteration ' + str(RPJTLXILVA) + ', bar changed to ' + str(bar) + '\n')
 
     y = "hello"
-    pyscribe_log.write('From line 15: y is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(y))).group()[1:-1] + ' ' + str(y)+ '\n')
-    pyscribe_log.write('From line 16: Watching variable y, currently ' + re.search(r'\'[a-zA-Z]*\'', str(type(y))).group()[1:-1] + ' ' + str(y)+ '\n')
+    pyscribe_log.write('From line 17: y is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(y))).group()[1:-1] + ' ' + str(y)+ '\n')
+    pyscribe_log.write('From line 18: Watching variable y, currently ' + re.search(r'\'[a-zA-Z]*\'', str(type(y))).group()[1:-1] + ' ' + str(y)+ '\n')
 
     y = "world"
 
+    foo = 1234
+    pyscribe_log.write('From line 23: \n----------------------------------------\nfoo is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(foo))).group()[1:-1] + ' ' + str(foo) + '\n----------------------------------------\n'+ '\n')
+
     synonyms = {"clerk": "secretary", "student": "apprentice", "ground": "floor"}
-    pyscribe_log.write('From line 21: synonyms is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(synonyms))).group()[1:-1] + ' ' + str(synonyms)+ '\n')
+    pyscribe_log.write('From line 26: synonyms is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(synonyms))).group()[1:-1] + ' ' + str(synonyms)+ '\n')
 
     pyscribe_log.close()
 if __name__ == "__main__":

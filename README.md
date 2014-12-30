@@ -67,56 +67,45 @@ Example
 ```python
 import pyscribe
 
-scriber = pyscribe.Scriber()
+def main():
+    ps = pyscribe.Scriber()
 
-scriber.is_debugging(True)
-scriber.log_lines(True)
-scriber.save_logs(True)
+    ps.save_logs(True)
 
-x = 5
-scriber.scribe(x) # From line xx: x is the number 5
+    x = 5
+    ps.p(x)
 
-for i in xrange(5):
-    scriber.iterscribe(i) # Starting for loop at line xx.
-                           # ============================
-                           # Iteration xx: i is the number xx
-                           # ....
-                           # ============================
-                           # End of loop at line xx.
+    for i in xrange(5):
+        ps.iterscribe(i)
 
-y = "hello"
-scriber.scribe(y) # From line xx: y is the string 'hello'
-scriber.watch(y)
+    y = "hello"
+    ps.p(y)
+    ps.watch(y)
 
-y = "world" # From line xx: y changed from the string 'hello' to the string 'world'
+    y = "world"
 
-synonyms = {"clerk": "secretary", "student": "apprentice", "ground": "floor"}
-scriber.scribe(synonyms) # From line xx: synonyms is a dictionary of length 3
+    synonyms = {"clerk": "secretary", "student": "apprentice", "ground": "floor"}
+    ps.p(synonyms)
+
+if __name__ == "__main__":
+    main()
 ```
-
-####logs.txt:
+####pyscribe_logs.txt:
 ```html
---------------Begin log of run at 12:22 PM---------
+From line 9: x is the int 5
+----------------------------------------
+bar is the str foo at beginning of for loop at line 12
+From line 14: In iteration 0, bar changed to foo0
+From line 14: In iteration 1, bar changed to foo01
+From line 14: In iteration 2, bar changed to foo012
+From line 14: In iteration 3, bar changed to foo0123
+From line 14: In iteration 4, bar changed to foo01234
+From line 17: y is the str hello
+From line 18: Watching variable y, currently str hello
+From line 23: 
+----------------------------------------
+foo is the int 1234
+----------------------------------------
 
-From line xx: x is the number 5
-Starting for loop at line xx.
-   ============================
-   Iteration 0: i is the number 1
-   Iteration 1: i is the number 1
-   Iteration 2: i is the number 1
-   Iteration 3: i is the number 1
-   Iteration 4: i is the number 1
-   ============================
-End of loop at line xx.
-From line xx: y is the string 'hello'
-From line xx: y changed from the string 'hello' to the string 'world'
-From line xx: synonyms is a dictionary of length 3
-From line xx: synonyms contains the following values:
-    ========================
-    'clerk': 'secretary'
-    'student': 'apprentice'
-    'ground': 'floor'
-    ========================
-
-----------------End of log---------------
+From line 26: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}
 ```

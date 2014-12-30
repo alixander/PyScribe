@@ -55,7 +55,7 @@ class Scriber(object):
     def d(self, obj, unit="-"):
         pass
 
-    def save_logs(self, do_save):
+    def save_logs(self, save):
         pass
 
 
