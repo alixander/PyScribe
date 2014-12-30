@@ -30,6 +30,7 @@ import uuid
 import random
 import string
 import sys
+import os
 import ast
 import re
 import inspect
@@ -341,8 +342,7 @@ def main():
         else:
             subprocess.call(['python', desugared_copy])
     if not args.desugared:
-        # TODO: Figure out a permenant solution. This only works on *nix machines
-        subprocess.call(['rm', desugared_copy])
+        os.remove(desugared_copy)
 
 if __name__ == "__main__":
     main()
