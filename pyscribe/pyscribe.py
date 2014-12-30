@@ -139,6 +139,8 @@ class Runner(object):
         self.write_imports(desugared_copy)
         program = open(program_file, 'r')
         first_call_indentation = ""
+        # Check if .close() has been added due to indentation decrease.
+        # If not, add it at the end.
         closing_line_added = False
 
         for line_num, line_content in enumerate(program.readlines()):
@@ -314,6 +316,8 @@ def process_args():
                         help='The Python file with PyScribe API calls.')
     parser.add_argument('-r', '--run', action='store_true',
                         help='Run the desugared version')
+    parser.add_argument('-d', '--desugared', action='store_true',
+                        help='Produce a desugared version of the file with all API calls replaced with valid Python.')
     parser.add_argument('-c', '--clean', action='store_true',
                         help='Produce a clean version of the file with all references to PyScribe removed')
     parser.add_argument('-e', '--extraargs', nargs="+",
@@ -336,6 +340,9 @@ def main():
             subprocess.call(['python', desugared_copy] + [arg for arg in args.extraargs])
         else:
             subprocess.call(['python', desugared_copy])
+    if not args.desugared:
+        # TODO: Figure out a permenant solution. This only works on *nix machines
+        subprocess.call(['rm', desugared_copy])
 
 if __name__ == "__main__":
     main()
