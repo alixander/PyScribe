@@ -80,6 +80,7 @@ class Runner(object):
     def __init__(self):
         self.show_line_num = True
         self.save_logs = True
+        self.initialized = False
         # p for print, d for distinguish
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
         self.imports = ['re', 'pprint']
@@ -144,6 +145,7 @@ class Runner(object):
             indentation = utils.get_indentation(line_content)
             if (not closing_line_added and
                     self.save_logs and
+                    self.initialized and
                     first_call_indentation != "" and
                     len(indentation) < len(first_call_indentation)):
                 closing_line = (first_call_indentation +
@@ -151,6 +153,7 @@ class Runner(object):
                 closing_line_added = True
                 self.desugared_lines.append(closing_line)
             if "Scriber()" in line_content:  # Line matches initial call
+                self.initialized = True
                 if self.save_logs:
                     desugared_line = (indentation +
                                      "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
@@ -172,7 +175,7 @@ class Runner(object):
                         break  # Should only be true once
             else:
                 self.desugared_lines.append(line_content)
-        if not closing_line_added and self.save_logs:
+        if not closing_line_added and self.save_logs and self.initialized:
             self.desugared_lines.append("pyscribe_log.close()\n")
         program.close()
         for line in self.desugared_lines:
@@ -322,16 +325,15 @@ def main():
     scribe = Runner()
     program_file = args.python_file[0]
     line_mapping = scribe.gen_line_mapping(program_file)
-    clean_copy = scribe.gen_clean_copy(program_file, line_mapping)
     program_ast = scribe.gen_ast(program_file)
     desugared_copy = scribe.gen_desugared(line_mapping,
                                           program_file,
                                           program_ast)
-    if not args.clean:
-        subprocess.call(['rm', clean_copy])
+    if args.clean:
+        scribe.gen_clean_copy(program_file, line_mapping)
     if args.run:
         if args.extraargs:
-            subprocess.call(['python', desugared_copy, args.extraargs])
+            subprocess.call(['python', desugared_copy] + [arg for arg in args.extraargs])
         else:
             subprocess.call(['python', desugared_copy])
 
