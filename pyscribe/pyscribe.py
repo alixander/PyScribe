@@ -323,14 +323,12 @@ def process_args():
     parser = argparse.ArgumentParser(description='Let PyScribe make print debugging easier and more efficient.')
     parser.add_argument('python_file', metavar='f', type=python_file_type, nargs='+',
                         help='The Python file with PyScribe API calls.')
-    parser.add_argument('-r', '--run', action='store_true',
-                        help='Run the desugared version')
     parser.add_argument('-d', '--desugared', action='store_true',
                         help='Produce a desugared version of the file with all API calls replaced with valid Python.')
     parser.add_argument('-c', '--clean', action='store_true',
                         help='Produce a clean version of the file with all references to PyScribe removed')
     parser.add_argument('-e', '--extraargs', nargs="+",
-                        help='Arguments intended to be passed to Python file when run. Must be called with --run set')
+                        help='Arguments intended to be passed to Python file when run.')
     return parser.parse_args()
 
 def main():
@@ -342,9 +340,11 @@ def main():
     desugared_copy = scribe.gen_desugared(line_mapping,
                                           program_file,
                                           program_ast)
+
+    do_run = not args.clean and not args.desugared  # Default
     if args.clean:
         scribe.gen_clean_copy(program_file, line_mapping)
-    if args.run:
+    if do_run:
         if args.extraargs:
             subprocess.call(['python', desugared_copy] + [arg for arg in args.extraargs])
         else:

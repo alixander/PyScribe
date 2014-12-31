@@ -27,12 +27,12 @@ Usage
 3. Make API calls as needed. (E.g.: `ps.p(x)`)
 4. Run one of the following commands
 ```bash
-$ pyscribe myfile.py --run
+$ pyscribe myfile.py
  ```
  This is the equivalent of running `$ python myfile.py` with all calls desugared.
 
 ```bash
-$ pyscribe myfile.py --run --extraargs "-u asdf"
+$ pyscribe myfile.py --extraargs "-u asdf"
 ```
 This is the equivalent of running `$ python myfile.py -u asdf` with all calls desugared.
 
@@ -44,7 +44,6 @@ This does not run anything, but rather outputs a myfile_desugared.py, which is i
 
 Argument Options
 -----------------
-- `--run` -- Run the desugared version
 - `--extraargs` -- Arguments intended to be passed to Python file when run. Must be called with --run set
 - `--clean` -- Produce a clean version of the file with all references to PyScribe removed 
 - `--desugared` -- Produce a desugared version of the file with all API calls replaced with valid Python.
