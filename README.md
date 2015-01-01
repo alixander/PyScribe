@@ -99,6 +99,10 @@ if __name__ == "__main__":
 ```
 ####pyscribe_logs.txt:
 ```html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Log saved at 2014-12-31 22:03:48
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 From line 9: x is the int 5
 ----------------------------------------
 bar is the str foo at beginning of for loop at line 12
@@ -120,4 +124,8 @@ foo is the int 1234
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 From line 27: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+End of log
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ```

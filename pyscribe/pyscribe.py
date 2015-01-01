@@ -256,13 +256,20 @@ class Runner(object):
                 text +
                 ending)
 
+    def offset(self):
+        # TODO: I think this is dependent of import lines. Should not hardcode
+        if self.save_logs:
+            return 1
+        return 0
+
     def iterscribe(self, line, line_num, indentation, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
         for node in ast.walk(program_ast):
             # TODO: handle nested for loops
             if ('iter' in node._fields and
                 ast.dump(ast.parse(line).body[0]) in ast.dump(node)):
-                self.desugared_lines.insert(node.lineno,
+                line_number = node.lineno - self.offset()
+                self.desugared_lines.insert(line_number,
                                             self.iter_start(node,
                                                             line,
                                                             line_num,
@@ -270,7 +277,8 @@ class Runner(object):
                                                             indentation))
                 iterator_index = "".join(random.choice(string.ascii_uppercase) for _ in range(10))
                 iterator_update = indentation + iterator_index + " += 1\n"
-                self.desugared_lines.insert(node.lineno, indentation[:-4] + iterator_index + " = -1\n")
+                self.desugared_lines.insert(line_number,
+                                            indentation[:-4] + iterator_index + " = -1\n")
                 self.desugared_lines.append(iterator_update)
                 output = ("In iteration ' + str(" +
                           iterator_index +
