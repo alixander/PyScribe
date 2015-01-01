@@ -1,14 +1,29 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Log saved at 2014-12-31 22:03:48
+Log saved at 2014-12-31 22:27:46
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+From line 9: x is the int 5
 ----------------------------------------
-x is the int 5 at beginning of for loop at line 4
-From line 6: In iteration 0, x changed to 6
-From line 6: In iteration 1, x changed to 7
-From line 6: In iteration 2, x changed to 8
-From line 6: In iteration 3, x changed to 9
-From line 6: In iteration 4, x changed to 10
+bar is the str foo at beginning of for loop at line 12
+From line 14: In iteration 0, bar changed to foo0
+From line 14: In iteration 1, bar changed to foo01
+From line 14: In iteration 2, bar changed to foo012
+From line 14: In iteration 3, bar changed to foo0123
+From line 14: In iteration 4, bar changed to foo01234
+From line 17: y is the str hello
+From line 18: Watching variable y, currently str hello
+From line 20: y changed to world
+From line 23: 
+----------------------------------------
+foo is the int 1234
+----------------------------------------
+
+From line 24: 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+foo is the int 1234
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+From line 27: synonyms is the dict {'clerk': 'secretary', 'student': 'apprentice', 'ground': 'floor'}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 End of log

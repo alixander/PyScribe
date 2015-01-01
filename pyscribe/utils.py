@@ -37,7 +37,7 @@ def get_distinguish_unit(line, program_ast):
 def lines_variable_changed(variable_id, program_file):
     lines = []
     program = open(program_file, 'r')
-    change_pattern = variable_id + r'[\s]*=[\sa-zA-Z0-9]*\n'
+    change_pattern = variable_id + r'[\s]*=.*\n'
     for line_num, line_content in enumerate(program.readlines()):
         match = re.search(change_pattern, line_content)
         if match:

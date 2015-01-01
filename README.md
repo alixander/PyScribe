@@ -113,6 +113,7 @@ From line 14: In iteration 3, bar changed to foo0123
 From line 14: In iteration 4, bar changed to foo01234
 From line 17: y is the str hello
 From line 18: Watching variable y, currently str hello
+From line 20: y changed to world
 From line 23: 
 ----------------------------------------
 foo is the int 1234
