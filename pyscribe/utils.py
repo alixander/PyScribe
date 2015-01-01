@@ -45,3 +45,20 @@ def lines_variable_changed(variable_id, program_file):
     program.close()
     return lines
 
+def get_timestamp(indentation):
+    timestamp = (indentation +
+                 "pyscribe_log.write('" +
+                 draw_line(unit="%") +
+                 "Log saved at ' + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) + '\\n" +
+                 draw_line(unit="%") +
+                 "\\n')\n")
+    return timestamp
+
+def get_end(indentation):
+    end = (indentation +
+           "pyscribe_log.write('\\n" +
+           draw_line(unit="%") +
+           "End of log\\n" +
+           draw_line(unit="%") +
+           "')\n")
+    return end
