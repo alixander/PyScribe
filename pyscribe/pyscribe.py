@@ -170,7 +170,7 @@ class Runner(object):
                                      "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
                     self.desugared_lines.append(desugared_line + timestamp)
                     first_call_indentation = indentation
-                #self.desugared_lines.append(line_content)
+                self.desugared_lines.append(line_content)
             elif line_content in line_mapping.values():  # Line matches an API call
                 self.desugared_lines.append(self.desugar_line(line_content[:-1],
                                             line_num,
