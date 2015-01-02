@@ -31,6 +31,17 @@ def get_label(line, program_ast):
         return node.value.keywords[0].value.s
     return None
 
+def get_filtered_labels(line, program_ast):
+    indentation = get_indentation(line)
+    line = line[len(indentation):]
+    parsed_line = ast.dump(ast.parse(line).body[0])
+    node = get_node(parsed_line, program_ast)
+    filtered_labels = []
+    if len(node.value.keywords) > 0 and node.value.keywords[0].arg == 'filtered':
+        for label in node.value.keywords[0].value.elts:
+            filtered_labels.append(label.s)
+    return filtered_labels
+
 def get_id_and_type(line, program_ast):
     variable_id = get_variable_id(line, program_ast)
     variable_type = ("re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" +

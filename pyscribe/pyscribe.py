@@ -40,7 +40,7 @@ sys.path.append('.')
 import utils
 
 class Scriber(object):
-    def __init__(self):
+    def __init__(self, filtered=[]):
         pass
 
     def p(self, obj):
@@ -82,16 +82,15 @@ class Watcher(object):
 
 class Runner(object):
     def __init__(self, logging):
-        # TODO: Parse file for user input value instead of hardcoding these
         self.show_line_num = True
         self.save_logs = logging
 
         self.initialized = False
         # p for print, d for distinguish
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
-        #TODO: Filter labels api
         self.imports = ['re', 'pprint', 'datetime']
         self.desugared_lines = []
+        self.filtered_labels = []
         self.watcher = Watcher()
 
     def gen_line_mapping(self, program_file):
@@ -163,7 +162,7 @@ class Runner(object):
                                 "pyscribe_log.close()\n")
                 closing_line_added = True
                 self.desugared_lines.append(closing_line)
-            if "pyscribe" in line_content:  # Line matches initial call
+            if "pyscribe" in line_content:
                 if self.save_logs:
                     self.initialized = True
                     timestamp = utils.get_timestamp(indentation)
@@ -171,12 +170,16 @@ class Runner(object):
                                      "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
                     self.desugared_lines.append(desugared_line + timestamp)
                     first_call_indentation = indentation
+                if "Scriber(" in line_content:
+                    self.filtered_labels = utils.get_filtered_labels(line_content, program_ast)
                 self.desugared_lines.append('#' + line_content)
             elif line_content in line_mapping.values():  # Line matches an API call
-                self.desugared_lines.append(self.desugar_line(line_content[:-1],
-                                            line_num,
-                                            program_file,
-                                            program_ast))  # don't want to include \n
+                desugared_line = self.desugar_line(line_content[:-1],
+                                                   line_num,
+                                                   program_file,
+                                                   program_ast)  # don't want to include \n
+                if desugared_line:
+                    self.desugared_lines.append(desugared_line)
             elif (self.watcher.num_watched() > 0 and  # Line matches watched variable change
                   line_num in self.watcher.new_line_nums()):
                 self.desugared_lines.append(line_content)
@@ -191,9 +194,11 @@ class Runner(object):
         if not closing_line_added and self.save_logs and self.initialized:
             self.desugared_lines.append(utils.get_end('') + "pyscribe_log.close()\n")
         program.close()
+
         for line in self.desugared_lines:
             desugared_copy.write(line)
         desugared_copy.close()
+
         return desugared_copy_name
 
     def from_line(self, line_num):
@@ -227,6 +232,9 @@ class Runner(object):
             desugared_line = self.distinguish(line, program_ast)
         else:
             desugared_line = ""
+
+        if not desugared_line:
+            return ""
 
         action, ending = self.action_and_ending(line_num)
         output = action + self.from_line(line_num) + desugared_line + ending
@@ -303,6 +311,9 @@ class Runner(object):
                   " + ' ' + str(" +
                   variable_id +
                   ")")
+        if len(self.filtered_labels) > 0:
+            if not label or label not in self.filtered_labels:
+                return ""
         if label:
             output += (" + ' (" + label + ")'")
         return output

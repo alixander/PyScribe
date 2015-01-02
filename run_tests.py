@@ -28,7 +28,9 @@ tests_directory = "tests" + os.sep
 test_modules = os.listdir(tests_directory)
 print("\n-----Starting test run-----\n")
 for module in test_modules:
-    print("Running test module: *" + str(module) + "*\n")
+    print("+++++++++++++++++++++++++++++++++++++++")
+    print("Running test module: *" + str(module) + "*")
+    print("+++++++++++++++++++++++++++++++++++++++")
     tests = filter(lambda x: "_desugared" not in x and
                              "_clean" not in x and
                              x.endswith(".py"),

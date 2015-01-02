@@ -51,6 +51,7 @@ Argument Options
 
 API Calls
 ----------
+- `pyscribe.Scriber(labels=[])` -- Initialize PyScribe. If you're scribing values with labels, you can filter by labels by passing in a list of the labels as strings.
 - `pyscribe.p(object, label=None)` -- Print the object value with relevant info dependent on type
 - `pyscribe.iterscribe(object)` -- Log the object value from inside a for or while loop which prints current iteration
 - `pyscribe.watch(object)` -- Log the object whenever its value changes
@@ -58,7 +59,6 @@ API Calls
 
 Planned
 ----------
-- `pyscribe.filter_labels(list)` -- Only log the pyscribe.scribe calls that are labeled with a label in the list
 - `pyscribe.values(object)` -- Log the internal values of lists and dictionaries in a pretty way
 
 Tests
