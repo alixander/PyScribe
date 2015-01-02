@@ -10,15 +10,26 @@ def draw_line(unit="-"):
 def get_indentation(line):
     return line[:len(line)-len(line.lstrip())]
 
+def get_node(match, program_ast):
+    for node in ast.walk(program_ast):
+        if match == ast.dump(node):
+            return node
+    raise KeyError("Could not find node")
+
 def get_variable_id(line, program_ast):
     """Return the variable id by finding the line in the program AST
     and gettings its argument
     """
     parsed_line = ast.dump(ast.parse(line).body[0])
-    for node in ast.walk(program_ast):
-        if parsed_line == ast.dump(node):
-            return node.value.args[0].id
-    raise KeyError("Was not able to find variable ID")
+    node = get_node(parsed_line, program_ast)
+    return node.value.args[0].id
+
+def get_label(line, program_ast):
+    parsed_line = ast.dump(ast.parse(line).body[0])
+    node = get_node(parsed_line, program_ast)
+    if len(node.value.keywords) > 0 and node.value.keywords[0].arg == 'label':
+        return node.value.keywords[0].value.s
+    return None
 
 def get_id_and_type(line, program_ast):
     variable_id = get_variable_id(line, program_ast)

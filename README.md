@@ -47,6 +47,7 @@ Argument Options
 - `--extraargs` -- Arguments intended to be passed to Python file when run. Must be called with --run set
 - `--clean` -- Produce a clean version of the file with all references to PyScribe removed 
 - `--desugared` -- Produce a desugared version of the file with all API calls replaced with valid Python.
+- `--log` -- Save logs to a pyscribe_log.txt file along with timestamp.
 
 API Calls
 ----------
@@ -58,9 +59,7 @@ API Calls
 Planned
 ----------
 - `pyscribe.filter_labels(list)` -- Only log the pyscribe.scribe calls that are labeled with a label in the list
-- `pyscribe.save_logs(boolean)` -- Save the logs with a timestamp in a file (does this by default right now)
-- `pyscribe.log_lines(boolean)` -- Insert a "from line xx" before each line (does this by default right now)
-- `pyscribe.scribevalues(object)` -- Log the internal values of lists and dictionaries in a pretty way
+- `pyscribe.values(object)` -- Log the internal values of lists and dictionaries in a pretty way
 
 Tests
 ----------

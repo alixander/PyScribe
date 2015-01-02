@@ -89,6 +89,7 @@ class Runner(object):
         self.initialized = False
         # p for print, d for distinguish
         self.api_calls = ['p', 'watch', 'iterscribe', 'd', 'Scriber']
+        #TODO: Filter labels api
         self.imports = ['re', 'pprint', 'datetime']
         self.desugared_lines = []
         self.watcher = Watcher()
@@ -295,12 +296,16 @@ class Runner(object):
         identifer, type, and value
         """
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
-        return (variable_id +
-                " is the ' + " +
-                variable_type +
-                " + ' ' + str(" +
-                variable_id +
-                ")")
+        label = utils.get_label(line, program_ast)
+        output = (variable_id +
+                  " is the ' + " +
+                  variable_type +
+                  " + ' ' + str(" +
+                  variable_id +
+                  ")")
+        if label:
+            output += (" + ' (" + label + ")'")
+        return output
 
     def variable_change(self, variable_id, line_num, indentation):
         """A helper method for watch that handles each line that watch
