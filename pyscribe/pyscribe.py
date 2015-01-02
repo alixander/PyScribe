@@ -163,7 +163,7 @@ class Runner(object):
                 closing_line_added = True
                 self.desugared_lines.append(closing_line)
             if "pyscribe" in line_content:
-                if self.save_logs:
+                if self.save_logs and "Scriber(" in line_content:
                     self.initialized = True
                     timestamp = utils.get_timestamp(indentation)
                     desugared_line = (indentation +
@@ -268,7 +268,7 @@ class Runner(object):
     def offset(self):
         # TODO: I think this is dependent of import lines. Should not hardcode
         if self.save_logs:
-            return 1
+            return 0
         return 1
 
     def iterscribe(self, line, line_num, indentation, program_ast):
