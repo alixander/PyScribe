@@ -81,10 +81,10 @@ class Watcher(object):
 
 
 class Runner(object):
-    def __init__(self):
+    def __init__(self, logging):
         # TODO: Parse file for user input value instead of hardcoding these
         self.show_line_num = True
-        self.save_logs = True
+        self.save_logs = logging
 
         self.initialized = False
         # p for print, d for distinguish
@@ -162,7 +162,7 @@ class Runner(object):
                                 "pyscribe_log.close()\n")
                 closing_line_added = True
                 self.desugared_lines.append(closing_line)
-            if "Scriber()" in line_content:  # Line matches initial call
+            if "pyscribe" in line_content:  # Line matches initial call
                 if self.save_logs:
                     self.initialized = True
                     timestamp = utils.get_timestamp(indentation)
@@ -170,7 +170,7 @@ class Runner(object):
                                      "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
                     self.desugared_lines.append(desugared_line + timestamp)
                     first_call_indentation = indentation
-                self.desugared_lines.append(line_content)
+                self.desugared_lines.append('#' + line_content)
             elif line_content in line_mapping.values():  # Line matches an API call
                 self.desugared_lines.append(self.desugar_line(line_content[:-1],
                                             line_num,
@@ -260,7 +260,7 @@ class Runner(object):
         # TODO: I think this is dependent of import lines. Should not hardcode
         if self.save_logs:
             return 1
-        return 0
+        return 1
 
     def iterscribe(self, line, line_num, indentation, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
@@ -339,11 +339,13 @@ def process_args():
                         help='Produce a clean version of the file with all references to PyScribe removed')
     parser.add_argument('-e', '--extraargs', nargs="+",
                         help='Arguments intended to be passed to Python file when run.')
+    parser.add_argument('-l', '--log', action="store_true",
+                        help='Log the files in a pyscribe_logs.txt file.')
     return parser.parse_args()
 
 def main():
     args = process_args()
-    scribe = Runner()
+    scribe = Runner(args.log)
     program_file = args.python_file[0]
     line_mapping = scribe.gen_line_mapping(program_file)
     program_ast = scribe.gen_ast(program_file)

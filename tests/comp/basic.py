@@ -3,8 +3,6 @@ from pyscribe import pyscribe
 def main():
     ps = pyscribe.Scriber()
 
-    ps.save_logs(True)
-
     x = 5
     ps.p(x)
 

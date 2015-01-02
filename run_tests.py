@@ -5,12 +5,10 @@ import difflib
 import time
 import subprocess
 
-def run_test(test_path):
-    command = "./pyscribe/pyscribe.py " + test_path
-    subprocess.call(command, shell=True)
+log = "pyscribe_log.txt"
 
-def run_desugared(test_path):
-    command = "python " + test_path
+def run_test(test_path):
+    command = "./pyscribe/pyscribe.py " + test_path + "> " + log
     subprocess.call(command, shell=True)
 
 def run_comparison(output, correct):
@@ -30,7 +28,7 @@ tests_directory = "tests" + os.sep
 test_modules = os.listdir(tests_directory)
 print("\n-----Starting test run-----\n")
 for module in test_modules:
-    print("Running test module: " + str(module) + "\n")
+    print("Running test module: *" + str(module) + "*\n")
     tests = filter(lambda x: "_desugared" not in x and
                              "_clean" not in x and
                              x.endswith(".py"),
@@ -39,17 +37,12 @@ for module in test_modules:
         start = time.time()
         test_path = tests_directory + module + os.sep
 
-        print("Desugaring test file: " + str(test))
+        print("Desugaring and running test file: " + str(test))
         run_test(test_path + test)
-
-        print("Running desugared version")
-        desugared_version = test[:-3] + "_desugared.py"
-        run_desugared(test_path + desugared_version)
 
         print("Comparing result with correct version")
         correct_file_path = test_path + test[:-3] + "_correct"
-        output_test_file = "pyscribe_logs.txt"
-        run_comparison(output_test_file, correct_file_path)
+        run_comparison(log, correct_file_path)
 
         print("Test finished in " + str(time.time()-start) + "ms\n")
 print("-----Finished running all tests-----\n")
