@@ -62,6 +62,10 @@ Planned
 - `pyscribe.log_lines(boolean)` -- Insert a "from line xx" before each line (does this by default right now)
 - `pyscribe.scribevalues(object)` -- Log the internal values of lists and dictionaries in a pretty way
 
+Tests
+----------
+Test modules are in the `tests` directory. Specific test cases are in these modules in the form of `testcase.py`, and the test runner compares these with `testcase_correct`.
+
 Example
 --------
 #####test.py:
