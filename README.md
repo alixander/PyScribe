@@ -1,5 +1,7 @@
 # [<img title="pyscribe-logo" src="http://i.imgur.com/JZYtIda.png" width="350px" alt="PyScribe logo"/>](https://github.com/alixander/pyscribe)
 
+[![Build Status](https://travis-ci.org/alixander/PyScribe.svg?branch=master)](https://travis-ci.org/alixander/pyscribe)
+
 A Python library to make debugging with print statements simpler and more effective.
 
 *Warning*: This project is currently in a pre-release state. Definitely open to contributions, or if you'd like to be a more active collaborator, send me an email at alexanderw at berkeley dot edu.
