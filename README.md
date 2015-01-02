@@ -1,4 +1,4 @@
-# [<img title="pyscribe-logo" src="http://i.imgur.com/1inFfFr.png" width="350px" alt="PyScribe logo"/>](https://github.com/alixander/pyscribe)
+# [<img title="pyscribe-logo" src="http://i.imgur.com/JZYtIda.png" width="350px" alt="PyScribe logo"/>](https://github.com/alixander/pyscribe)
 
 A Python library to make debugging with print statements simpler and more effective.
 
