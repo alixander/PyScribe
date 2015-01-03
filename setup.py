@@ -9,7 +9,7 @@ setup(
     license = "MIT",
     keywords = "python pyscribe debug print",
     url = "https://github.com/alixander/pyscribe",
-    download_url = "https://github.com/alixander/pyscribe/tarbell/0.1.1",
+    download_url = "https://github.com/alixander/pyscribe/tarbell/0.1.2",
     entry_points={
         'console_scripts': [
             'pyscribe = pyscribe.pyscribe:main',
@@ -17,6 +17,10 @@ setup(
         },
     packages=['pyscribe'],
     classifiers=[
-        "Development Status :: 3 - Alpha"
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
     ],
 )
