@@ -1,6 +1,6 @@
 # [<img title="pyscribe-logo" src="http://i.imgur.com/JZYtIda.png" width="350px" alt="PyScribe logo"/>](https://github.com/alixander/pyscribe)
 
-[![Build Status](https://travis-ci.org/alixander/PyScribe.svg?branch=master)](https://travis-ci.org/alixander/pyscribe) [![Latest Version](https://pypip.in/version/pyscribe/badge.svg?text=version)](https://pypi.python.org/pypi/pyscribe/) [![Supported Python versions](https://pypip.in/py_versions/pyscribe/badge.svg)](https://pypi.python.org/pypi/pyscribe/)
+[![Build Status](https://travis-ci.org/alixander/PyScribe.svg?branch=master)](https://travis-ci.org/alixander/PyScribe) [![Latest Version](https://pypip.in/version/pyscribe/badge.svg?text=version)](https://pypi.python.org/pypi/pyscribe/) [![Supported Python versions](https://pypip.in/py_versions/pyscribe/badge.svg)](https://pypi.python.org/pypi/pyscribe/)
 
 A Python library to make debugging with print statements simpler and more effective.
 
