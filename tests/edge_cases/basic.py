@@ -4,6 +4,7 @@ def main():
     #ps.p(x)
     y = "hello"
     ps.p(y)
+    ps.p(x)
 
 if __name__=="__main__":
     main()
