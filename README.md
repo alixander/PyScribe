@@ -65,7 +65,7 @@ Planned
 
 Tests
 ----------
-Test modules are in the `tests` directory. Specific test cases are in these modules in the form of `testcase.py`, and the test runner compares these with `testcase_correct`.
+Test modules are in the `tests` directory. Specific test cases are in these modules in the form of `testcase.py`, and the test runner compares these with `testcase_correct`. Run the tests with `./run_tests`.
 
 Example
 --------
@@ -75,8 +75,6 @@ from pyscribe import pyscribe
 
 def main():
     ps = pyscribe.Scriber()
-
-    ps.save_logs(True)
 
     x = 5
     ps.p(x)
@@ -146,8 +144,6 @@ import datetime
 def main():
     pyscribe_log = open('pyscribe_logs.txt', 'w')
     pyscribe_log.write('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\nLog saved at ' + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')) + '\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n')
-
-    #ps.save_logs(True)
 
     x = 5
     pyscribe_log.write('From line 9: x is the ' + re.search(r'\'[a-zA-Z]*\'', str(type(x))).group()[1:-1] + ' ' + str(x)+ '\n')

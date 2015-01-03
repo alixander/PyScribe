@@ -153,6 +153,8 @@ class Runner(object):
         closing_line_added = False
 
         for line_num, line_content in enumerate(program.readlines()):
+            if re.match(r'(\s)*#', line_content):  # Ignore commented out lines
+                continue
             indentation = utils.get_indentation(line_content)
             if (not closing_line_added and
                     self.save_logs and
