@@ -7,7 +7,7 @@ def main():
     ps.p(x)
 
     bar = "foo"
-    for i in xrange(5):
+    for i in range(5):
         bar += str(i)
         ps.iterscribe(bar)
 
