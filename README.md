@@ -4,7 +4,7 @@
 
 A Python library to make debugging with print statements simpler and more effective.
 
-*Warning*: This project is currently in a pre-release state. Definitely open to contributions, or if you'd like to be a more active collaborator, send me an email at alexanderw at berkeley dot edu.
+*Warning*: This project is currently in a pre-release state. Open to contributions and collaborators.
 
 Installation
 ------------
@@ -61,6 +61,7 @@ API Calls
 Planned
 ----------
 - `pyscribe.values(object)` -- Log the internal values of lists and dictionaries in a pretty way
+- `pyscribe.props(object)` -- Log the fields of an object and their values
 
 Tests
 ----------

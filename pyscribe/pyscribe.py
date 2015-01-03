@@ -58,6 +58,9 @@ class Scriber(object):
     def save_logs(self, save):
         pass
 
+    def props(self):
+        pass
+
 
 class Watcher(object):
     def __init__(self):
