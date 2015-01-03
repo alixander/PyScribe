@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 setup(
     name = "pyscribe",
-    version = "0.1.1",
+    version = "0.1.2",
     author = "Alexander Wang",
     author_email = "alexanderw@berkeley.edu",
     description = ("PyScribe makes print debugging easier and more efficient"),
