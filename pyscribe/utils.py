@@ -3,7 +3,7 @@ import re
 
 def draw_line(unit="-"):
     output = ""
-    for _ in xrange(40):
+    for _ in range(40):
         output += unit
     return output + "\\n"
 

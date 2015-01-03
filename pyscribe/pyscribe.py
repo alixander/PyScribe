@@ -332,8 +332,8 @@ class Runner(object):
     def watch(self, line, line_num, program_file, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
         self.watcher.watch_var(variable_id)
-        lines = filter(lambda x: x > line_num,
-                       utils.lines_variable_changed(variable_id, program_file))
+        lines = list(filter(lambda x: x > line_num,
+                       utils.lines_variable_changed(variable_id, program_file)))
         self.watcher.set_lines(variable_id, lines)
         return ("Watching variable " +
                 variable_id +
