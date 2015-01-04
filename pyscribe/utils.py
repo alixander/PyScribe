@@ -42,6 +42,9 @@ def get_filtered_labels(line, program_ast):
             filtered_labels.append(label.s)
     return filtered_labels
 
+def is_shebang(line):
+    return True if "#!/usr/bin" in line else False
+
 def get_id_and_type(line, program_ast):
     variable_id = get_variable_id(line, program_ast)
     variable_type = ("re.search(r\'\\\'[a-zA-Z]*\\\'\', str(type(" +
