@@ -95,6 +95,7 @@ class Runner(object):
         self.desugared_lines = []
         self.filtered_labels = []
         self.watcher = Watcher()
+        self.shebang = False
 
     def gen_line_mapping(self, program_file):
         """Return a dictionary of lines as keys and
@@ -135,9 +136,9 @@ class Runner(object):
         f.close()
         return ast_output
 
-    def write_imports(self, f):
+    def write_imports(self):
         for imp in self.imports:
-            f.write("import " + imp + "\n")
+            self.desugared_lines.append("import " + imp + "\n")
 
     def gen_desugared(self, line_mapping, program_file, program_ast):
         """Generate a desugared version that Python understands
@@ -145,7 +146,6 @@ class Runner(object):
         """
         desugared_copy_name = program_file[:-3] + "_desugared.py"
         desugared_copy = open(desugared_copy_name, 'w')
-        self.write_imports(desugared_copy)
         program = open(program_file, 'r')
         first_call_indentation = ""
         # Check if .close() has been added due to indentation decrease.
@@ -153,6 +153,11 @@ class Runner(object):
         closing_line_added = False
 
         for line_num, line_content in enumerate(program.readlines()):
+            if line_num == 0:
+                if utils.is_shebang(line_content):
+                    self.desugared_lines.append(line_content)
+                    self.shebang = True
+                self.write_imports()
             if re.match(r'(\s)*#', line_content):  # Ignore commented out lines
                 continue
             indentation = utils.get_indentation(line_content)
@@ -271,10 +276,10 @@ class Runner(object):
                 ending)
 
     def offset(self):
-        # TODO: I think this is dependent of import lines. Should not hardcode
+        offset = len(self.imports) - 1
         if self.save_logs:
-            return 0
-        return 1
+            offset += 1
+        return offset
 
     def iterscribe(self, line, line_num, indentation, program_ast):
         variable_id, variable_type = utils.get_id_and_type(line, program_ast)
@@ -282,7 +287,7 @@ class Runner(object):
             # TODO: handle nested for loops
             if ('iter' in node._fields and
                 ast.dump(ast.parse(line).body[0]) in ast.dump(node)):
-                line_number = node.lineno - self.offset()
+                line_number = node.lineno + self.offset()
                 self.desugared_lines.insert(line_number,
                                             self.iter_start(node,
                                                             line,
