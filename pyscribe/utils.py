@@ -62,10 +62,12 @@ def get_distinguish_unit(line, program_ast):
 def lines_variable_changed(variable_id, program_file):
     lines = []
     program = open(program_file, 'r')
-    change_pattern = variable_id + r'[\s]*=.*\n'
+    assign_pat = variable_id + r'[\s]*=.*\n'
+    list_mutation_pat = variable_id + r'\.(append|extend|insert|remove|pop|reverse)(.)*\n'
     for line_num, line_content in enumerate(program.readlines()):
-        match = re.search(change_pattern, line_content)
-        if match:
+        assign = re.search(assign_pat, line_content)
+        list_mutation = re.search(list_mutation_pat, line_content)
+        if assign or list_mutation:
             lines.append(line_num)
     program.close()
     return lines
