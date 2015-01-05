@@ -63,15 +63,22 @@ def lines_variable_changed(variable_id, program_file):
     lines = []
     program = open(program_file, 'r')
     assign_pat = variable_id + r'[\s]*(\+|\-|\*|\/)?=.*\n'
+    # Mutable sequences in Python
     list_mutation_pat = variable_id + r'\.(append|extend|insert|remove|pop|reverse)(.)*\n'
     dict_mutation_pat = variable_id + r'\[[\"a-zA-Z0-9]+\](\s)?(\+|\-|\*|\/)?='
+    set_mutation_pat = variable_id + r'\.(update|intersection_update|difference_update|add|remove|discard|pop|clear)(.)*\n'
     key_del_pat = r'del[\s]?' + variable_id
     for line_num, line_content in enumerate(program.readlines()):
         assign = re.search(assign_pat, line_content)
         list_mutation = re.search(list_mutation_pat, line_content)
         dict_mutation = re.search(dict_mutation_pat, line_content)
         dict_key_deleted = re.search(key_del_pat, line_content)
-        changed = assign or list_mutation or dict_mutation or dict_key_deleted
+        set_mutation = re.search(set_mutation_pat, line_content)
+        changed = (assign or
+                   list_mutation or
+                   dict_mutation or
+                   dict_key_deleted or
+                   set_mutation)
         if changed:
             lines.append(line_num)
     program.close()

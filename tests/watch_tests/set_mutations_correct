@@ -1,0 +1,4 @@
+From line 4: Watching variable x, currently set set([1, 2])
+From line 5: x changed to set([1, 2, 3])
+From line 6: x changed to set([2, 3])
+From line 7: x changed to set([])

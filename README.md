@@ -62,7 +62,6 @@ Planned
 ----------
 - `pyscribe.values(object)` -- Log the internal values of lists and dictionaries in a pretty way
 - `pyscribe.props(object)` -- Log the fields of an object and their values
-- `watch` only supports tracking mutations via `asgn` nodes. Other forms of mutation statements like append, join, etc are not handled. Should start adding these.
 - Add configurations for the logging messages. e.g. `Line 9: x is 4` instead of `From line 9: x is the int 4`.
 
 Tests
