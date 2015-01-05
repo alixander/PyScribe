@@ -1,12 +1,12 @@
 Metadata-Version: 1.1
 Name: pyscribe
-Version: 0.1.3
+Version: 0.1.4
 Summary: PyScribe makes print debugging easier and more efficient
 Home-page: https://github.com/alixander/pyscribe
 Author: Alexander Wang
 Author-email: alexanderw@berkeley.edu
 License: MIT
-Download-URL: https://github.com/alixander/pyscribe/tarbell/0.1.2
+Download-URL: https://github.com/alixander/pyscribe/tarbell/0.1.4
 Description: UNKNOWN
 Keywords: python pyscribe debug print
 Platform: UNKNOWN
