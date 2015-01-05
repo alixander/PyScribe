@@ -8,7 +8,7 @@ import subprocess
 log = "pyscribe_log.txt"
 
 def run_test(test_path):
-    command = "./pyscribe/pyscribe.py " + test_path + "> " + log
+    command = "python pyscribe/pyscribe.py " + test_path + "> " + log
     subprocess.call(command, shell=True)
 
 def run_comparison(output, correct):
