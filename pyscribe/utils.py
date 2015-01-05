@@ -64,10 +64,13 @@ def lines_variable_changed(variable_id, program_file):
     program = open(program_file, 'r')
     assign_pat = variable_id + r'[\s]*(\+|\-|\*|\/)?=.*\n'
     list_mutation_pat = variable_id + r'\.(append|extend|insert|remove|pop|reverse)(.)*\n'
+    dict_mutation_pat = variable_id + r'\[[\"a-zA-Z0-9]+\](\s)?(\+|\-|\*|\/)?='
     for line_num, line_content in enumerate(program.readlines()):
         assign = re.search(assign_pat, line_content)
         list_mutation = re.search(list_mutation_pat, line_content)
-        if assign or list_mutation:
+        dict_mutation = re.search(dict_mutation_pat, line_content)
+        changed = assign or list_mutation or dict_mutation
+        if changed:
             lines.append(line_num)
     program.close()
     return lines
