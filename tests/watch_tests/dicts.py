@@ -5,6 +5,7 @@ def main():
     x["a"] += 1
     x["a"] = 3
     x["b"] = 1
+    del x["b"]
 
 if __name__=="__main__":
     main()

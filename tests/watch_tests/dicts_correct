@@ -2,3 +2,4 @@ From line 4: Watching variable x, currently dict {'a': 1}
 From line 5: x changed to {'a': 2}
 From line 6: x changed to {'a': 3}
 From line 7: x changed to {'a': 3, 'b': 1}
+From line 8: x changed to {'a': 3}

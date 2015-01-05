@@ -65,11 +65,13 @@ def lines_variable_changed(variable_id, program_file):
     assign_pat = variable_id + r'[\s]*(\+|\-|\*|\/)?=.*\n'
     list_mutation_pat = variable_id + r'\.(append|extend|insert|remove|pop|reverse)(.)*\n'
     dict_mutation_pat = variable_id + r'\[[\"a-zA-Z0-9]+\](\s)?(\+|\-|\*|\/)?='
+    key_del_pat = r'del[\s]?' + variable_id
     for line_num, line_content in enumerate(program.readlines()):
         assign = re.search(assign_pat, line_content)
         list_mutation = re.search(list_mutation_pat, line_content)
         dict_mutation = re.search(dict_mutation_pat, line_content)
-        changed = assign or list_mutation or dict_mutation
+        dict_key_deleted = re.search(key_del_pat, line_content)
+        changed = assign or list_mutation or dict_mutation or dict_key_deleted
         if changed:
             lines.append(line_num)
     program.close()
