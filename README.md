@@ -4,6 +4,8 @@
 
 A Python library to make debugging with print statements simpler and more effective.
 
+[PyScribe.com](http://pyscribe.com) for full documentation. (Work in progress)
+
 *Warning*: This project is currently in a pre-release state. Open to contributions and collaborators.
 
 Installation
