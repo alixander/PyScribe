@@ -102,38 +102,30 @@ class Runner(object):
         the corresponding api call lines as values
         """
         line_mapping = {}
-        program = open(program_file, 'r')
-
-        for line_num, line_content in enumerate(program.readlines()):
-            is_api_call = False
-            for func in self.api_calls:
-                if ("." + func + "(") in line_content:
-                    # line num in most text editors is 1-indexed
-                    line_mapping[line_num+1] = line_content
-
-        program.close()
+        with open(program_file, 'r') as program:
+            for line_num, line_content in enumerate(program.readlines()):
+                is_api_call = False
+                for func in self.api_calls:
+                    if ("." + func + "(") in line_content:
+                        # line num in most text editors is 1-indexed
+                        line_mapping[line_num+1] = line_content
         return line_mapping
 
     def gen_clean_copy(self, program_file, line_mapping):
         """Generate and return a clean copy of the file
         with all references of pyscriber removed
         """
-        program = open(program_file, 'r')
-        clean_copy_name = program_file[:-3] + "_clean.py"
-        clean_copy = open(clean_copy_name, 'w')
-
-        for line_num, line_content in enumerate(program.readlines()):
-            if (line_num + 1) not in line_mapping.keys():
-                clean_copy.write(line_content)
-
-        clean_copy.close()
-        program.close()
+        with open(program_file, 'r') as program:
+            clean_copy_name = program_file[:-3] + "_clean.py"
+            with open(clean_copy_name, 'w') as clean_copy:
+                for line_num, line_content in enumerate(program.readlines()):
+                    if (line_num + 1) not in line_mapping.keys():
+                        clean_copy.write(line_content)
         return clean_copy_name
 
     def gen_ast(self, program_file):
-        f = open(program_file, 'r')
-        ast_output = ast.parse(f.read())
-        f.close()
+        with open(program_file, 'r') as f:
+            ast_output = ast.parse(f.read())
         return ast_output
 
     def write_imports(self):
@@ -145,70 +137,66 @@ class Runner(object):
         from one with PyScriber API calls
         """
         desugared_copy_name = program_file[:-3] + "_desugared.py"
-        desugared_copy = open(desugared_copy_name, 'w')
-        program = open(program_file, 'r')
-        first_call_indentation = ""
-        # Check if .close() has been added due to indentation decrease.
-        # If not, add it at the end.
-        closing_line_added = False
+        with  open(desugared_copy_name, 'w') as desugared_copy:
+            with open(program_file, 'r') as program:
+                first_call_indentation = ""
+                # Check if .close() has been added due to indentation decrease.
+                # If not, add it at the end.
+                closing_line_added = False
 
-        for line_num, line_content in enumerate(program.readlines()):
-            if line_num == 0:
-                if utils.is_shebang(line_content):
-                    self.desugared_lines.append(line_content)
-                    self.shebang = True
-                self.write_imports()
-            if re.match(r'(\s)*#', line_content):  # Ignore commented out lines
-                continue
-            indentation = utils.get_indentation(line_content)
-            if (not closing_line_added and
-                    self.save_logs and
-                    self.initialized and
-                    first_call_indentation != "" and
-                    len(line_content) > 2 and
-                    len(indentation) < len(first_call_indentation)):
-                closing_line = (utils.get_end(first_call_indentation) +
-                                first_call_indentation +
-                                "pyscribe_log.close()\n")
-                closing_line_added = True
-                self.desugared_lines.append(closing_line)
-            if "pyscribe" in line_content:
-                if self.save_logs and "Scriber(" in line_content:
-                    self.initialized = True
-                    timestamp = utils.get_timestamp(indentation)
-                    desugared_line = (indentation +
-                                     "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
-                    self.desugared_lines.append(desugared_line + timestamp)
-                    first_call_indentation = indentation
-                if "Scriber(" in line_content:
-                    self.filtered_labels = utils.get_filtered_labels(line_content, program_ast)
-                self.desugared_lines.append('#' + line_content)
-            elif line_content in line_mapping.values():  # Line matches an API call
-                desugared_line = self.desugar_line(line_content[:-1],
-                                                   line_num,
-                                                   program_file,
-                                                   program_ast)  # don't want to include \n
-                if desugared_line:
-                    self.desugared_lines.append(desugared_line)
-            elif (self.watcher.num_watched() > 0 and  # Line matches watched variable change
-                  line_num in self.watcher.new_line_nums()):
-                self.desugared_lines.append(line_content)
-                for var, lines in self.watcher.vars_and_lines():
-                    if line_num in lines:
-                        self.desugared_lines.append(self.variable_change(var,
-                                                                         line_num,
-                                                                         indentation))
-                        break  # Should only be true once
-            else:
-                self.desugared_lines.append(line_content)
-        if not closing_line_added and self.save_logs and self.initialized:
-            self.desugared_lines.append(utils.get_end('') + "pyscribe_log.close()\n")
-        program.close()
-
-        for line in self.desugared_lines:
-            desugared_copy.write(line)
-        desugared_copy.close()
-
+                for line_num, line_content in enumerate(program.readlines()):
+                    if line_num == 0:
+                        if utils.is_shebang(line_content):
+                            self.desugared_lines.append(line_content)
+                            self.shebang = True
+                        self.write_imports()
+                    if re.match(r'(\s)*#', line_content):  # Ignore commented out lines
+                        continue
+                    indentation = utils.get_indentation(line_content)
+                    if (not closing_line_added and
+                            self.save_logs and
+                            self.initialized and
+                            first_call_indentation != "" and
+                            len(line_content) > 2 and
+                            len(indentation) < len(first_call_indentation)):
+                        closing_line = (utils.get_end(first_call_indentation) +
+                                        first_call_indentation +
+                                        "pyscribe_log.close()\n")
+                        closing_line_added = True
+                        self.desugared_lines.append(closing_line)
+                    if "pyscribe" in line_content:
+                        if self.save_logs and "Scriber(" in line_content:
+                            self.initialized = True
+                            timestamp = utils.get_timestamp(indentation)
+                            desugared_line = (indentation +
+                                             "pyscribe_log = open('pyscribe_logs.txt', 'w')\n")
+                            self.desugared_lines.append(desugared_line + timestamp)
+                            first_call_indentation = indentation
+                        if "Scriber(" in line_content:
+                            self.filtered_labels = utils.get_filtered_labels(line_content, program_ast)
+                        self.desugared_lines.append('#' + line_content)
+                    elif line_content in line_mapping.values():  # Line matches an API call
+                        desugared_line = self.desugar_line(line_content[:-1],
+                                                           line_num,
+                                                           program_file,
+                                                           program_ast)  # don't want to include \n
+                        if desugared_line:
+                            self.desugared_lines.append(desugared_line)
+                    elif (self.watcher.num_watched() > 0 and  # Line matches watched variable change
+                          line_num in self.watcher.new_line_nums()):
+                        self.desugared_lines.append(line_content)
+                        for var, lines in self.watcher.vars_and_lines():
+                            if line_num in lines:
+                                self.desugared_lines.append(self.variable_change(var,
+                                                                                 line_num,
+                                                                                 indentation))
+                                break  # Should only be true once
+                    else:
+                        self.desugared_lines.append(line_content)
+                if not closing_line_added and self.save_logs and self.initialized:
+                    self.desugared_lines.append(utils.get_end('') + "pyscribe_log.close()\n")
+            for line in self.desugared_lines:
+                desugared_copy.write(line)
         return desugared_copy_name
 
     def from_line(self, line_num):
