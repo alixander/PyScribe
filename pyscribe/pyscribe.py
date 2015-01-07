@@ -84,8 +84,8 @@ class Watcher(object):
 
 
 class Runner(object):
-    def __init__(self, logging):
-        self.show_line_num = True
+    def __init__(self, logging, no_lines):
+        self.show_lines = not no_lines
         self.save_logs = logging
 
         self.initialized = False
@@ -200,7 +200,7 @@ class Runner(object):
         return desugared_copy_name
 
     def from_line(self, line_num):
-        if self.show_line_num:
+        if self.show_lines:
             return "From line " + str(line_num+1) + ": "
         return ""
 
@@ -235,7 +235,10 @@ class Runner(object):
             return ""
 
         action, ending = self.action_and_ending(line_num)
-        output = action + self.from_line(line_num) + desugared_line + ending
+        if self.show_lines:
+            output = action + self.from_line(line_num) + desugared_line + ending
+        else:
+            output = action + desugared_line + ending
 
         if len(indentation) > 0:
             output = indentation + output
@@ -321,7 +324,10 @@ class Runner(object):
         identifies as a variable change"""
         desugared = variable_id + " changed to ' + str(" + variable_id + ")"
         action, ending = self.action_and_ending(line_num)
-        output = indentation + action + self.from_line(line_num) + desugared + ending
+        if self.show_lines:
+            output = indentation + action + self.from_line(line_num) + desugared + ending
+        else:
+            output = indentation + action + desugared + ending
         return output
 
     def watch(self, line, line_num, program_file, program_ast):
@@ -355,11 +361,13 @@ def process_args():
                         help='Arguments intended to be passed to Python file when run.')
     parser.add_argument('-l', '--log', action="store_true",
                         help='Log the files in a pyscribe_logs.txt file.')
+    parser.add_argument('-n', '--nolines', action="store_true",
+                        help='Don\'t show the line numbers from each call.')
     return parser.parse_args()
 
 def main():
     args = process_args()
-    scribe = Runner(args.log)
+    scribe = Runner(args.log, args.nolines)
     program_file = args.python_file[0]
     line_mapping = scribe.gen_line_mapping(program_file)
     program_ast = scribe.gen_ast(program_file)

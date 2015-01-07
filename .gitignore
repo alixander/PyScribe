@@ -4,3 +4,4 @@ __pycache__
 .pypirc
 env/*
 pyscribe_log.txt
+pyscribe_logs.txt

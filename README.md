@@ -51,6 +51,7 @@ Argument Options
 - `--clean` -- Produce a clean version of the file with all references to PyScribe removed 
 - `--desugared` -- Produce a desugared version of the file with all API calls replaced with valid Python.
 - `--log` -- Save logs to a pyscribe_log.txt file along with timestamp.
+- `--nolines` -- Don't show line numbers.
 
 API Calls
 ----------
