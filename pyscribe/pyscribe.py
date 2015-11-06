@@ -84,6 +84,8 @@ class Watcher(object):
 
 
 class Runner(object):
+    CLEAN_SUFFIX = "_clean.py"
+
     def __init__(self, logging, no_lines):
         self.show_lines = not no_lines
         self.save_logs = logging
@@ -104,9 +106,8 @@ class Runner(object):
         line_mapping = {}
         with open(program_file, 'r') as program:
             for line_num, line_content in enumerate(program.readlines()):
-                is_api_call = False
                 for func in self.api_calls:
-                    if ("." + func + "(") in line_content:
+                    if utils.is_ps_call(func, line_content):
                         # line num in most text editors is 1-indexed
                         line_mapping[line_num+1] = line_content
         return line_mapping
@@ -116,7 +117,7 @@ class Runner(object):
         with all references of pyscriber removed
         """
         with open(program_file, 'r') as program:
-            clean_copy_name = program_file[:-3] + "_clean.py"
+            clean_copy_name = program_file[:-3] + self.CLEAN_SUFFIX
             with open(clean_copy_name, 'w') as clean_copy:
                 for line_num, line_content in enumerate(program.readlines()):
                     if (line_num + 1) not in line_mapping.keys():

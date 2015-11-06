@@ -101,3 +101,8 @@ def get_end(indentation):
            draw_line(unit="%") +
            "')\n")
     return end
+
+# TODO: find a better way to detect ps call. This could break if someone has a method named the same as pyscribe's. Should find variable set to Scriber.
+def is_ps_call(func, line):
+    # In the form of ps.watch(x).
+    return ("." + func + "(") in line
