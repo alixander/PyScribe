@@ -66,6 +66,9 @@ Planned
 - `pyscribe.values(object)` -- Log the internal values of lists and dictionaries in a pretty way
 - `pyscribe.props(object)` -- Log the fields of an object and their values
 - Add configurations for the logging messages. e.g. `Line 9: x is 4` instead of `From line 9: x is the int 4`.
+- `pyscribe make` -- Command line instruction to search python files in current directory, desugar all files using pyscribe, replace files with desugared version, store old version in temporary directory.
+- `pyscribe debug` -- Command line instruction to find any desugared pyscribe files, replace them with counterparts in temporary directory.
+- `pyscribe clean` -- Command line instruction to find python files using pyscribe and replace them with a clean version. Erase debug versions unless told otherwise. --save-debug or something.
 
 Tests
 ----------
