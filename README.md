@@ -146,7 +146,7 @@ This log comes from running the desugared version of test.py:
 import re
 import pprint
 import datetime
-#from pyscribe import pyscribe
+# from pyscribe import pyscribe
 
 def main():
     pyscribe_log = open('pyscribe_logs.txt', 'w')
